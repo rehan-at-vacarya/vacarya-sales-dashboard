@@ -79,7 +79,8 @@ select{height:30px;padding:0 26px 0 10px;background:var(--surface);color:var(--t
 .v.sm{font-size:26px}
 .v.warn{color:var(--red)}
 .sub{font-size:12px;color:var(--subtle);margin-top:8px;font-variant-numeric:tabular-nums}
-#bd{overflow-x:auto}
+#bd,#sc,#cn{overflow-x:auto}
+.row>*{min-width:0}
 
 /* first-paint skeleton -- matches the final layout, no full-page spinner */
 .boot .v{color:transparent;background:linear-gradient(90deg,#1E222A,#252A33,#1E222A);
@@ -156,7 +157,7 @@ table.tight td{padding:10px 12px}
 .ob__lost{height:100%;background:var(--accent)}
 .ob__won{height:100%;background:var(--green)}
 
-.tgrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(390px,1fr))}
+.tgrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(390px,100%),1fr))}
 .tc__h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .tc__t{font-family:var(--font-head);font-size:15px;font-weight:600;color:var(--text);
   letter-spacing:-.01em}
@@ -173,7 +174,7 @@ table.tight td{padding:10px 12px}
 
 @media(max-width:1200px){.r3{grid-template-columns:1fr 1fr}.r3>:first-child{grid-column:1/-1}}
 @media(max-width:1100px){.r5,.r4,.r3e{grid-template-columns:repeat(2,1fr)}.r2{grid-template-columns:1fr}}
-@media(max-width:600px){.page{padding:8px 16px 32px}.r5,.r4,.r3,.r3e{grid-template-columns:1fr}
+@media(max-width:600px){.page{padding:8px 16px 32px}.sec__h span{white-space:normal;letter-spacing:.1em}.sec__h{flex-wrap:wrap}.sec__h .seg{flex-wrap:wrap}.r5,.r4,.r3,.r3e{grid-template-columns:1fr}
   .r3>:first-child{grid-column:auto}}
 </style>
 </head>
@@ -209,23 +210,23 @@ table.tight td{padding:10px 12px}
 <div class="page">
 
   <section class="sec">
-    <div class="sec__h"><span>Call to Close</span><i></i></div>
+    <div class="sec__h"><span>Call to Close &middot; people who booked in this range</span><i></i></div>
     <div class="row r4">
-      <div class="card"><div class="k">Booked Calls</div><div class="v num" id="f1">—</div><div class="sub">since Sep 9</div></div>
+      <div class="card"><div class="k">Booked</div><div class="v num" id="f1">—</div><div class="sub" id="f1s">—</div></div>
       <div class="card"><div class="k">Cancelled</div><div class="v num" id="f2">—</div><div class="sub" id="f2s">—</div></div>
-      <div class="card"><div class="k">Live Calls</div><div class="v num" id="f3">—</div></div>
-      <div class="card"><div class="k">No Shows</div><div class="v num" id="f4">—</div></div>
-      <div class="card"><div class="k">Offers Made</div><div class="v num" id="f5">—</div></div>
-      <div class="card"><div class="k">Follow-Up / Pending</div><div class="v num" id="f6">—</div></div>
-      <div class="card"><div class="k">Won</div><div class="v num" id="f7">—</div></div>
-      <div class="card"><div class="k">Lost</div><div class="v num" id="f8">—</div></div>
+      <div class="card"><div class="k">Showed</div><div class="v num" id="f3">—</div><div class="sub" id="f3s">—</div></div>
+      <div class="card"><div class="k">No Shows</div><div class="v num" id="f4">—</div><div class="sub" id="f4s">—</div></div>
+      <div class="card"><div class="k">Offers Made</div><div class="v num" id="f5">—</div><div class="sub" id="f5s">—</div></div>
+      <div class="card"><div class="k">Still Open</div><div class="v num" id="f6">—</div><div class="sub">Follow-up booked or pending</div></div>
+      <div class="card"><div class="k">Won</div><div class="v num" id="f7">—</div><div class="sub" id="f7s">—</div></div>
+      <div class="card"><div class="k">Lost</div><div class="v num" id="f8">—</div><div class="sub" id="f8s">—</div></div>
     </div>
   </section>
 
   <section class="sec">
     <div class="sec__h"><span>Cash</span><i></i></div>
     <div class="row r3e">
-      <div class="card"><div class="k">Cash Collected</div><div class="v num" id="m5">—</div></div>
+      <div class="card"><div class="k">Cash Collected</div><div class="v num" id="m5">—</div><div class="sub" id="m5s">—</div></div>
       <div class="card"><div class="k">Cash / Booked Call</div><div class="v num" id="c1">—</div></div>
       <div class="card"><div class="k">Cash / Live Call</div><div class="v num" id="c2">—</div></div>
     </div>
@@ -238,18 +239,17 @@ table.tight td{padding:10px 12px}
       <div class="card"><div class="k">Offer Rate</div><div class="v num" id="r2">—</div></div>
       <div class="card"><div class="k">Close Rate</div><div class="v num" id="r3">—</div></div>
       <div class="card"><div class="k">Offer to Close</div><div class="v num" id="r4">—</div></div>
-      <div class="card"><div class="k">No Shows</div><div class="v num" id="r5">—</div></div>
+      <div class="card"><div class="k">Cancel Rate</div><div class="v num" id="r5">—</div></div>
     </div>
   </section>
 
   <section class="sec">
-    <div class="sec__h"><span>Open Pipeline</span><i></i></div>
-    <div class="row r5">
-      <div class="card"><div class="k">Follow-Ups Booked</div><div class="v sm num" id="x1">—</div></div>
-      <div class="card"><div class="k">Decision Pending</div><div class="v sm num" id="x2">—</div></div>
-      <div class="card"><div class="k">Deals Lost</div><div class="v sm num" id="x3">—</div></div>
-      <div class="card"><div class="k">1st Call Close</div><div class="v sm num" id="x4">—</div></div>
-      <div class="card"><div class="k">2nd+ Call Close</div><div class="v sm num" id="x5">—</div></div>
+    <div class="sec__h"><span>Follow-Ups &middot; all calls held in this range</span><i></i></div>
+    <div class="row r4">
+      <div class="card"><div class="k">All Live Calls</div><div class="v sm num" id="x1">—</div><div class="sub">Incl. follow-ups and older bookings</div></div>
+      <div class="card"><div class="k">Follow-Ups Booked</div><div class="v sm num" id="x2">—</div></div>
+      <div class="card"><div class="k">Decision Pending</div><div class="v sm num" id="x3">—</div></div>
+      <div class="card"><div class="k">2nd+ Call Close</div><div class="v sm num" id="x5">—</div><div class="sub" id="x5s">—</div></div>
     </div>
   </section>
 
@@ -350,6 +350,8 @@ const pct=(a,b)=>b>0?(a/b*100).toFixed(1)+"%":"—";
 const cash2=v=>v>=1e6?"$"+(v/1e6).toFixed(2)+"M":"$"+Math.round(v).toLocaleString("en-US");
 const name=s=>(s||"—").replace(/@.*/,"").split(/[._\s]/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(" ");
 const yes=v=>v===true||v==="true";
+/* funnel rows (booked people) ride in the same feed as call rows; call-only views skip them */
+const isF=r=>n(r.ap_booked)>0;
 const PAL=["#4C8DFF","#3DD68C","#9B7DFF","#2DD4BF","#F5A623","#6B7280"];
 
 /* source labels -- raw contact_type keys are ugly */
@@ -442,8 +444,13 @@ function inRange(x){return inWindow(x,S.days,S.d1,S.d2)&&inDims(x)}
 function inTrendRange(x){return inWindow(x,S.tdays,S.td1,S.td2)&&inDims(x)}
 function sum(R){
   const t={b:0,ns:0,l:0,no:0,dq:0,o:0,won:0,lost:0,fu:0,pend:0,um:0,
-           c1:0,c2:0,c3:0,w1:0,w2:0,w3:0,cash:0};
+           c1:0,c2:0,c3:0,w1:0,w2:0,w3:0,cash:0,
+           /* funnel: same people, counted by the day they first booked */
+           bk:0,cx:0,sh:0,fns:0,ul:0,of:0,fw:0,fl:0,fp:0};
   R.forEach(r=>{
+    t.bk+=n(r.ap_booked); t.cx+=n(r.ap_cancelled); t.sh+=n(r.ap_showed);
+    t.fns+=n(r.ap_noshow); t.ul+=n(r.ap_unlogged); t.of+=n(r.ap_offered);
+    t.fw+=n(r.ap_won); t.fl+=n(r.ap_lost); t.fp+=n(r.ap_pending);
     t.b+=n(r.logged_calls); t.ns+=n(r.no_shows); t.l+=n(r.live_calls);
     t.no+=n(r.no_offers); t.dq+=n(r.closer_dqs); t.o+=n(r.offers_made);
     t.won+=n(r.deals_won); t.lost+=n(r.deals_lost);
@@ -477,20 +484,29 @@ function opts(){
 function draw(){
   opts();
   const R=S.rows.filter(inRange), t=sum(R);
-  const A=S.appts.filter(inRange), a=sumA(A), ok=S.apptOK;
-  f1.textContent=ok?f(a.bk):"—"; f2.textContent=ok?f(a.cx):"—";
-  f2s.textContent=ok&&a.bk?pct(a.cx,a.bk)+" of booked":"—";
-  f3.textContent=f(t.l); f4.textContent=f(t.ns); f5.textContent=f(t.o);
-  f6.textContent=f(t.fu+t.pend); f7.textContent=f(t.won); f8.textContent=f(t.lost);
+  const A=S.appts.filter(inRange);
+  /* top row = one funnel of the same people, so every step adds up */
+  const met=t.sh+t.fns;                       // calls that happened: showed + no-show
+  const up=Math.max(0,t.bk-t.cx-met-t.ul);    // booked, call not due yet
+  f1.textContent=f(t.bk); f1s.textContent=up?f(up)+" calls still upcoming":"New people booked";
+  f2.textContent=f(t.cx); f2s.textContent=t.bk?pct(t.cx,t.bk)+" of booked":"—";
+  f3.textContent=f(t.sh); f3s.textContent=met?pct(t.sh,met)+" show rate":"—";
+  f4.textContent=f(t.fns); f4s.textContent=met?pct(t.fns,met)+" of calls due":"—";
+  f5.textContent=f(t.of); f5s.textContent=t.sh?pct(t.of,t.sh)+" of showed":"—";
+  f6.textContent=f(t.fp);
+  f7.textContent=f(t.fw); f7s.textContent=t.sh?pct(t.fw,t.sh)+" of showed":"—";
+  f8.textContent=f(t.fl); f8s.textContent=t.sh?pct(t.fl,t.sh)+" of showed":"—";
   m5.textContent=money(t.cash);
-  c1.textContent=ok&&a.bk?cash2(t.cash/a.bk):"—";
+  m5s.textContent=f(t.won)+" deal"+(t.won===1?"":"s")+" marked Won in this range";
+  c1.textContent=t.bk?cash2(t.cash/t.bk):"—";
   c2.textContent=t.l?cash2(t.cash/t.l):"—";
-  r1.textContent=pct(t.l,t.b); r2.textContent=pct(t.o,t.l); r3.textContent=pct(t.won,t.l);
-  r4.textContent=pct(t.won,t.o); r5.textContent=f(t.ns);
-  x1.textContent=f(t.fu); x2.textContent=f(t.pend); x3.textContent=f(t.lost);
-  x4.textContent=pct(t.w1,t.c1); x5.textContent=pct(t.w2+t.w3,t.c2+t.c3);
+  r1.textContent=pct(t.sh,met); r2.textContent=pct(t.of,t.sh); r3.textContent=pct(t.fw,t.sh);
+  r4.textContent=pct(t.fw,t.of); r5.textContent=pct(t.cx,t.bk);
+  x1.textContent=f(t.l); x2.textContent=f(t.fu); x3.textContent=f(t.pend);
+  x5.textContent=pct(t.w2+t.w3,t.c2+t.c3);
+  x5s.textContent=f(t.w2+t.w3)+" won of "+f(t.c2+t.c3)+" follow-up calls";
   h1.textContent=f(t.um); h1.className="v sm num"+(t.um?" warn":"");
-  h5.textContent=ok?f(a.ul):"—"; h5.className="v sm num"+(ok&&a.ul?" warn":"");
+  h5.textContent=f(t.ul); h5.className="v sm num"+(t.ul?" warn":"");
   h2.textContent=f(t.no); h3.textContent=f(t.dq); h4.textContent=f(t.fu+t.pend);
   trend(R); objections(S.objs.filter(inRange)); donut(R); callno(t); source(R); board(R,A);
   trends(S.rows.filter(inTrendRange));
@@ -515,7 +531,7 @@ const empty=(t,s)=>`<div class="none"><b>${t}</b>${s||""}</div>`;
 /* ---------- daily activity: two lines, hovered one takes focus ---------- */
 function trend(R){
   const svg=document.getElementById("tr"),by={};
-  R.forEach(r=>{const d=r.occurred_date;by[d]=by[d]||{l:0,w:0};
+  R.forEach(r=>{if(isF(r))return;const d=r.occurred_date;by[d]=by[d]||{l:0,w:0};
     by[d].l+=n(r.live_calls);by[d].w+=n(r.deals_won)});
   const D=Object.keys(by).sort();
   if(!D.length){svg.innerHTML=`<text x="50%" y="50%" text-anchor="middle" class="ax">No calls in this range</text>`;
@@ -645,7 +661,7 @@ function callno(t){
 
 function source(R){
   const by={};
-  R.forEach(r=>{const k=src(r.source);by[k]=by[k]||{b:0,l:0,w:0};
+  R.forEach(r=>{if(isF(r))return;const k=src(r.source);by[k]=by[k]||{b:0,l:0,w:0};
     by[k].b+=n(r.logged_calls);by[k].l+=n(r.live_calls);by[k].w+=n(r.deals_won)});
   const L=Object.entries(by).sort((a,b)=>b[1].w-a[1].w||b[1].b-a[1].b);
   const el=document.getElementById("sc");
@@ -658,7 +674,7 @@ function source(R){
 
 function agg(R,A){
   const by={}, z=()=>({b:0,l:0,o:0,won:0,lost:0,fu:0,pend:0,cash:0,bk:0,cx:0,ul:0});
-  R.forEach(r=>{const k=r.closer||"—";
+  R.forEach(r=>{if(isF(r))return;const k=r.closer||"—";
     by[k]=by[k]||z();
     by[k].b+=n(r.logged_calls);by[k].l+=n(r.live_calls);by[k].o+=n(r.offers_made);
     by[k].won+=n(r.deals_won);by[k].lost+=n(r.deals_lost);
@@ -722,11 +738,11 @@ function bucketLabel(k,tf){
   return k;
 }
 const METRICS=[
-  {id:"booked",t:"Calls Booked",  fmt:"n", num:x=>x.b,   den:null},
-  {id:"show",  t:"Show Rate",     fmt:"p", num:x=>x.l,   den:x=>x.b},
+  {id:"booked",t:"Calls Booked",  fmt:"n", num:x=>x.bk,  den:null},
+  {id:"show",  t:"Show Rate",     fmt:"p", num:x=>x.sh,  den:x=>x.sh+x.fns},
   {id:"offer", t:"Offer Rate",    fmt:"p", num:x=>x.o,   den:x=>x.l},
   {id:"close", t:"Close Rate",    fmt:"p", num:x=>x.won, den:x=>x.l},
-  {id:"cpbc",  t:"Cash / Booked Call", fmt:"$", num:x=>x.cash, den:x=>x.b},
+  {id:"cpbc",  t:"Cash / Booked Call", fmt:"$", num:x=>x.cash, den:x=>x.bk},
   {id:"cplc",  t:"Cash / Live Call",   fmt:"$", num:x=>x.cash, den:x=>x.l},
   {id:"cash",  t:"Cash Collected",fmt:"$", num:x=>x.cash, den:null}
 ];
@@ -737,7 +753,8 @@ function trends(R){
   const bk={};
   R.forEach(r=>{
     const k=bucket(r.occurred_date,S.tf);
-    bk[k]=bk[k]||{b:0,l:0,o:0,won:0,cash:0};
+    bk[k]=bk[k]||{b:0,l:0,o:0,won:0,cash:0,bk:0,sh:0,fns:0};
+    bk[k].bk+=n(r.ap_booked); bk[k].sh+=n(r.ap_showed); bk[k].fns+=n(r.ap_noshow);
     bk[k].b+=n(r.logged_calls); bk[k].l+=n(r.live_calls);
     bk[k].o+=n(r.offers_made); bk[k].won+=n(r.deals_won);
     bk[k].cash+=n(r.deals_won)*DEAL;
