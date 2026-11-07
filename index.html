@@ -176,6 +176,155 @@ table.tight td{padding:10px 12px}
 @media(max-width:1100px){.r5,.r4,.r3e{grid-template-columns:repeat(2,1fr)}.r2{grid-template-columns:1fr}}
 @media(max-width:600px){.page{padding:8px 16px 32px}.sec__h span{white-space:normal;letter-spacing:.1em}.sec__h{flex-wrap:wrap}.sec__h .seg{flex-wrap:wrap}.r5,.r4,.r3,.r3e{grid-template-columns:1fr}
   .r3>:first-child{grid-column:auto}}
+
+/* ================= tabs ================= */
+.tabs{display:flex;justify-content:center;padding:16px 16px 0}
+.tabs__in{position:relative;display:inline-flex;padding:4px;border-radius:999px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.tabs button{position:relative;z-index:1;height:34px;padding:0 18px;border:0;background:none;
+  border-radius:999px;color:#8E97A6;font:600 13px/1 var(--font);letter-spacing:-.01em;cursor:pointer;
+  white-space:nowrap;transition:color .3s}
+.tabs button[aria-selected="true"]{color:#fff}
+.tabs__pill{position:absolute;top:4px;bottom:4px;left:4px;width:0;border-radius:999px;
+  background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.1));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 6px 18px -4px rgba(0,0,0,.5);
+  transition:left .5s cubic-bezier(.3,1.35,.5,1),width .5s cubic-bezier(.3,1.35,.5,1)}
+body.ai-on .bar .right{display:none}
+body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255,.06)}
+
+/* ================= Aiden's Dashboard (dark glass) ================= */
+.ai{--ai-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",ui-sans-serif,system-ui,sans-serif;
+  --glass:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.035) 55%,rgba(255,255,255,.05));
+  --edge:rgba(255,255,255,.13); --hi:rgba(255,255,255,.22);
+  --t1:#F5F7FA; --t2:rgba(235,240,248,.62); --t3:rgba(235,240,248,.38);
+  --blue:#2CC2F5; --blue2:#00ABE5; --mint:#4BE0A8; --violet:#9C8CFF; --amber:#FFC266; --rose:#FF7A8A;
+  position:relative;max-width:1240px;margin:0 auto;padding:30px 28px 70px;
+  font-family:var(--ai-font);color:var(--t1)}
+.ai[hidden]{display:none}
+.ai-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#04060B}
+.ai-bg i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;will-change:transform}
+.ai-bg i:nth-child(1){width:52vw;height:52vw;left:-12vw;top:-18vw;background:#0A8FD0;animation:aiDrift 26s ease-in-out infinite alternate}
+.ai-bg i:nth-child(2){width:42vw;height:42vw;right:-10vw;top:4vw;background:#4B3BCB;opacity:.38;animation:aiDrift 32s ease-in-out -8s infinite alternate-reverse}
+.ai-bg i:nth-child(3){width:60vw;height:44vw;left:20vw;bottom:-26vw;background:#062F65;opacity:.9;animation:aiDrift 38s ease-in-out -4s infinite alternate}
+.ai-bg::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(120% 80% at 50% 0%,transparent 40%,rgba(2,3,6,.75) 100%)}
+@keyframes aiDrift{to{transform:translate3d(6vw,5vw,0) scale(1.12)}}
+
+.ai-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.ai-title{margin:0;font-size:34px;font-weight:700;letter-spacing:-.035em;line-height:1.05}
+.ai-sub{margin:8px 0 0;font-size:14px;color:var(--t2);letter-spacing:-.01em}
+.ai-ctl{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ai-seg{position:relative;display:inline-flex;padding:3px;border-radius:13px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.ai-seg button{position:relative;z-index:1;height:30px;padding:0 13px;border:0;background:none;border-radius:10px;
+  color:var(--t2);font:600 12.5px/1 var(--ai-font);cursor:pointer;white-space:nowrap;transition:color .25s}
+.ai-seg button[aria-pressed="true"]{color:#fff}
+.ai-seg .pill{position:absolute;top:3px;bottom:3px;border-radius:10px;background:rgba(255,255,255,.16);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 4px 12px -2px rgba(0,0,0,.45);
+  transition:left .45s cubic-bezier(.3,1.35,.5,1),width .45s cubic-bezier(.3,1.35,.5,1)}
+.ai-sel{height:36px;padding:0 30px 0 13px;border-radius:13px;background-color:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);color:var(--t1);font:600 12.5px var(--ai-font);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);background-position:right 11px center}
+.ai-sel option{background:#10141C}
+.ai-stamp{font-size:12px;color:var(--t3);font-variant-numeric:tabular-nums;width:100%;text-align:right}
+
+.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.ai-grid>*{min-width:0}
+
+/* glass surface */
+.gl-card{position:relative;border-radius:28px;background:var(--glass);border:1px solid var(--edge);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);
+  box-shadow:inset 0 1px 0 var(--hi),inset 0 -1px 0 rgba(255,255,255,.03),0 30px 60px -30px rgba(0,0,0,.75),0 10px 24px -14px rgba(0,0,0,.55);
+  overflow:hidden;isolation:isolate}
+.gl-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+  background:radial-gradient(120% 70% at 0% 0%,var(--tint,rgba(44,194,245,.16)),transparent 55%)}
+
+/* flip card */
+.fc{height:272px;cursor:default;transform-origin:50% 50%;will-change:transform}
+.fc__face{position:absolute;inset:0;padding:22px 22px 20px;display:flex;flex-direction:column}
+.fc__face[hidden]{display:none}
+.fc__top{display:flex;align-items:center;gap:10px;min-height:34px}
+.fc__ic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:none;
+  background:var(--chip,rgba(44,194,245,.18));box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+.fc__ic svg{width:17px;height:17px;stroke:var(--acc,#2CC2F5);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fc__lb{font-size:14px;font-weight:600;color:var(--t2);letter-spacing:-.01em;line-height:1.2}
+.fc__btn{margin-left:auto;width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:var(--t1);cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2);transition:transform .35s cubic-bezier(.3,1.5,.5,1),background .2s}
+.fc__btn:hover{background:rgba(255,255,255,.16);transform:scale(1.08)}
+.fc__btn:active{transform:scale(.92)}
+.fc__btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fc__val{margin-top:auto;font-size:56px;font-weight:700;letter-spacing:-.05em;line-height:.95;
+  font-variant-numeric:tabular-nums}
+.fc__val small{font-size:28px;font-weight:600;letter-spacing:-.03em;margin-left:2px;color:var(--t2)}
+.fc__note{margin-top:10px;font-size:13px;color:var(--t2);font-variant-numeric:tabular-nums;letter-spacing:-.005em;min-height:18px}
+.fc__ft{margin-top:14px;height:30px;display:flex;align-items:flex-end}
+.fc__bar{width:100%;margin-bottom:4px;height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.fc__bar i{display:block;height:100%;width:0;border-radius:inherit;
+  background:linear-gradient(90deg,var(--acc2,#00ABE5),var(--acc,#2CC2F5));
+  box-shadow:0 0 14px var(--acc,#2CC2F5);transition:width 1.1s cubic-bezier(.2,.9,.2,1)}
+.fc__spark{height:30px;width:100%;display:block}
+
+.fc__bh{font-size:15px;font-weight:650;letter-spacing:-.02em}
+.fc__list{margin-top:12px;display:flex;flex-direction:column;gap:9px;overflow:auto;scrollbar-width:none;flex:1;min-height:0;
+  padding-bottom:14px;-webkit-mask-image:linear-gradient(#000 calc(100% - 26px),transparent);mask-image:linear-gradient(#000 calc(100% - 26px),transparent)}
+.fc__sub{display:flex;flex-direction:column;gap:9px;margin-top:6px}
+.fc__list::-webkit-scrollbar{display:none}
+.fc__row{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:12.5px;color:var(--t2)}
+.fc__row b{color:var(--t1);font-weight:600;font-variant-numeric:tabular-nums}
+.fc__row em{font-style:normal;color:var(--t3);font-weight:500;margin-left:5px}
+.fc__row .tr{grid-column:1/-1;height:4px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.fc__row .tr i{display:block;height:100%;border-radius:inherit;background:var(--acc,#2CC2F5);opacity:.85}
+.fc__grp{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-top:4px}
+.fc__fn{margin-top:10px;font-size:11px;line-height:1.4;color:var(--t3)}
+.fc__kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.fc__kv div{padding:9px 10px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07)}
+.fc__kv span{display:block;font-size:10.5px;color:var(--t3);font-weight:600;letter-spacing:.02em}
+.fc__kv b{display:block;margin-top:3px;font-size:17px;font-weight:650;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+
+/* month table */
+.ai-mo{margin-top:18px;padding:22px 22px 10px}
+.ai-mo h3{margin:0 0 4px;font-size:17px;font-weight:650;letter-spacing:-.02em}
+.ai-mo p{margin:0 0 14px;font-size:12.5px;color:var(--t3)}
+.ai-tw{overflow-x:auto;scrollbar-width:thin}
+.ai-t{width:100%;border-collapse:collapse;min-width:640px}
+.ai-t th{font:700 10.5px var(--ai-font);letter-spacing:.09em;text-transform:uppercase;color:var(--t3);
+  text-align:right;padding:0 10px 10px}
+.ai-t th:first-child,.ai-t td:first-child{text-align:left;padding-left:0}
+.ai-t td{padding:13px 10px;text-align:right;font-size:14px;font-weight:600;border-top:1px solid rgba(255,255,255,.07);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.ai-t td span{display:block;font-size:11px;font-weight:500;color:var(--t3);margin-top:2px}
+.ai-t td.m{font-size:14px;color:var(--t1)}
+.ai-t tbody tr{transition:background .2s}
+.ai-t tbody tr:hover{background:rgba(255,255,255,.04)}
+
+/* staggered blur reveal + diagonal mask wipe */
+.rv{-webkit-mask-image:linear-gradient(135deg,#000 42%,transparent 58%);mask-image:linear-gradient(135deg,#000 42%,transparent 58%);
+  -webkit-mask-size:320% 320%;mask-size:320% 320%;
+  animation:aiRv .95s cubic-bezier(.16,.84,.24,1) both;animation-delay:calc(var(--i,0) * 75ms)}
+@keyframes aiRv{
+  from{opacity:0;filter:blur(16px);transform:translate3d(0,16px,0) scale(.975);-webkit-mask-position:100% 100%;mask-position:100% 100%}
+  60%{opacity:1}
+  to{opacity:1;filter:blur(0);transform:none;-webkit-mask-position:0 0;mask-position:0 0}}
+.ai-skel .fc__val,.ai-skel .fc__note{color:transparent!important;border-radius:10px;
+  background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.12),rgba(255,255,255,.05));
+  background-size:200% 100%;animation:sh 1.3s ease-in-out infinite}
+.ai-skel .fc__val{width:55%}
+.ai-skel .fc__val small{display:none}
+
+@media(max-width:1020px){.ai-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){
+  .tabs{padding:12px 12px 0}.tabs button{padding:0 13px;font-size:12.5px}
+  .ai{padding:22px 16px 56px}.ai-title{font-size:28px}
+  .ai-ctl{margin-left:0;width:100%}.ai-seg{width:100%}.ai-seg button{flex:1;padding:0 6px}
+  .ai-sel{flex:1;min-width:0}.ai-stamp{text-align:left}
+  .ai-grid{grid-template-columns:1fr;gap:14px}.fc{height:256px}.fc__val{font-size:50px}
+  .ai-mo{padding:18px 16px 6px}}
+@media(prefers-reduced-motion:reduce){
+  .rv{animation:none;-webkit-mask-image:none;mask-image:none}.ai-bg i{animation:none}
+  .tabs__pill,.ai-seg .pill,.fc__bar i{transition:none}}
 </style>
 </head>
 <body class="boot">
@@ -207,7 +356,45 @@ table.tight td{padding:10px 12px}
   </div>
 </div>
 
-<div class="page">
+<nav class="tabs" aria-label="Dashboards">
+  <div class="tabs__in" role="tablist">
+    <span class="tabs__pill" id="tabPill"></span>
+    <button role="tab" id="tabBtnSales" data-tab="sales" aria-selected="true" aria-controls="tabSales">Closer Performance</button>
+    <button role="tab" id="tabBtnAiden" data-tab="aiden" aria-selected="false" aria-controls="tabAiden">Aiden's Dashboard</button>
+  </div>
+</nav>
+
+<div class="ai" id="tabAiden" role="tabpanel" aria-labelledby="tabBtnAiden" hidden>
+  <div class="ai-bg" aria-hidden="true"><i></i><i></i><i></i></div>
+  <header class="ai-head">
+    <div>
+      <h1 class="ai-title">Aiden's Dashboard</h1>
+      <p class="ai-sub" id="aiSub">People who booked in this period · first booking only</p>
+    </div>
+    <div class="ai-ctl">
+      <div class="ai-seg" id="aiPer">
+        <span class="pill"></span>
+        <button data-p="m" aria-pressed="true">This month</button>
+        <button data-p="lm">Last month</button>
+        <button data-p="90">90 days</button>
+        <button data-p="all">All time</button>
+      </div>
+      <select class="ai-sel" id="aiCl" aria-label="Closer"><option value="">All closers</option></select>
+      <select class="ai-sel" id="aiSr" aria-label="Source"><option value="">All sources</option></select>
+      <div class="ai-stamp" id="aiStamp">Loading…</div>
+    </div>
+  </header>
+  <div class="ai-grid ai-skel" id="aiGrid"></div>
+  <section class="gl-card ai-mo" id="aiMo" style="--tint:rgba(80,70,220,.14)">
+    <h3>Month by month</h3>
+    <p>Same rules as the cards. Each month = people whose first booking was that month.</p>
+    <div class="ai-tw"><table class="ai-t"><thead><tr>
+      <th>Month</th><th>Booked</th><th>Qualified</th><th>1st Show</th><th>2nd Booked</th><th>2nd Show</th><th>Close</th>
+    </tr></thead><tbody id="aiMoBody"></tbody></table></div>
+  </section>
+</div>
+
+<div class="page" id="tabSales" role="tabpanel" aria-labelledby="tabBtnSales">
 
   <section class="sec">
     <div class="sec__h"><span>Call to Close &middot; people who booked in this range</span><i></i></div>
@@ -911,6 +1098,284 @@ document.addEventListener("visibilitychange",()=>{
 
 load();
 startPoll();
+</script>
+
+<script>
+/* ============ Aiden's Dashboard ============
+   Data: n8n /webhook/dashboard-aiden -> BigQuery mart_aiden (from fct_followups + fct_bookings).
+   One row per booked_date x closer x source. Everything is a cohort of people by FIRST booking date. */
+(function(){
+const API="https://stayvacarya.app.n8n.cloud/webhook/dashboard-aiden";
+const $=id=>document.getElementById(id);
+const A={rows:[],ok:false,per:"m",cl:"",sr:"",busy:false,timer:null,shown:false};
+const N=v=>Number(v||0);
+const fmt=v=>Math.round(v).toLocaleString("en-US");
+const P=(a,b)=>b>0?a/b:null;
+const pctTxt=(a,b)=>b>0?Math.round(a/b*100)+"%":"—";
+const SRCN={webinar_lead:"Webinar",vsl_lead:"VSL",e2_lead:"E2",skool_lead:"Skool",lead:"Unassigned","":"Unassigned"};
+const srcName=s=>SRCN[s]??s;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const RM=matchMedia("(prefers-reduced-motion: reduce)");
+const today=()=>new Intl.DateTimeFormat("en-CA",{timeZone:"America/Toronto"}).format(new Date());
+const addDays=(d,k)=>{const x=new Date(d+"T12:00:00Z");x.setUTCDate(x.getUTCDate()+k);return x.toISOString().slice(0,10)};
+const monLabel=m=>new Date(m+"-15T12:00:00Z").toLocaleDateString("en-US",{month:"long",year:"numeric",timeZone:"UTC"});
+const dayLabel=d=>new Date(d+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"});
+
+function range(){
+  const t=today(), m=t.slice(0,7);
+  if(A.per==="m") return [m+"-01",t,monLabel(m)];
+  if(A.per==="lm"){const d=new Date(m+"-01T12:00:00Z");d.setUTCMonth(d.getUTCMonth()-1);
+    const lm=d.toISOString().slice(0,7), end=addDays(m+"-01",-1);return [lm+"-01",end,monLabel(lm)]}
+  if(A.per==="90"){const s=addDays(t,-89);return [s,t,dayLabel(s)+" – "+dayLabel(t)]}
+  return ["0000-01-01","9999-12-31","All time"];
+}
+const dimOK=r=>(!A.cl||r.closer===A.cl)&&(!A.sr||srcName(r.source)===A.sr);
+const KEYS=["booked","qualified","unqualified","no_pickup","canceled","call1_showed","call1_noshow","q_call1_showed",
+  "q_call1_noshow","showed_any","offered","call2_booked","call2_showed","call2_noshow","won","cash"];
+function sum(R){const t={};KEYS.forEach(k=>t[k]=0);R.forEach(r=>KEYS.forEach(k=>t[k]+=N(r[k])));return t}
+function by(R,key){const o={};R.forEach(r=>{(o[r[key]]=o[r[key]]||[]).push(r)});return Object.entries(o).map(([k,v])=>[k,sum(v)])}
+
+/* ---------- icons ---------- */
+const IC={
+  cal:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
+  check:'<path d="M20 7 10 17l-5-5"/>',
+  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+  repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
+  user2:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.8c1.7.7 2.8 2.4 3 5.2"/>',
+  trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
+  stats:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  back:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>'
+};
+const svg=(p,c="")=>`<svg viewBox="0 0 24 24" aria-hidden="true" class="${c}">${p}</svg>`;
+
+/* ---------- card definitions ---------- */
+const listRows=(items,acc)=>{ const mx=Math.max(...items.map(x=>x.bar),0.0001);
+  return items.map(x=>`<div class="fc__row"><span>${esc(x.label)}</span><b>${x.val}${x.em?`<em>${x.em}</em>`:""}</b>
+    <div class="tr"><i style="width:${Math.max(2,x.bar/mx*100).toFixed(1)}%;${acc?`background:${acc}`:""}"></i></div></div>`).join("")};
+const rateByCloser=(R,num,den)=>by(R,"closer").map(([k,t])=>({label:k,n:t[num],d:den(t)}))
+  .filter(x=>x.d>0).sort((a,b)=>b.n/b.d-a.n/a.d)
+  .map(x=>({label:x.label,val:Math.round(x.n/x.d*100)+"%",em:x.n+"/"+x.d,bar:x.n/x.d}));
+const none='<div class="fc__fn" style="margin-top:14px">Nothing in this period yet.</div>';
+
+const CARDS=[
+ {id:"bk",label:"Booked Calls",icon:"cal",acc:"#2CC2F5",acc2:"#00ABE5",tint:"rgba(44,194,245,.18)",
+  front:t=>({v:t.booked,unit:"",note:"People · first booking only",spark:true}),
+  back:(R,t)=>{const s=by(R.map(r=>({...r,src_n:srcName(r.source)})),"src_n").sort((a,b)=>b[1].booked-a[1].booked).map(([k,x])=>({label:k,val:fmt(x.booked),em:pctTxt(x.booked,t.booked),bar:x.booked}));
+    const c=by(R,"closer").sort((a,b)=>b[1].booked-a[1].booked).map(([k,x])=>({label:k,val:fmt(x.booked),bar:x.booked}));
+    return t.booked?`<div class="fc__grp">By source</div>${listRows(s)}<div class="fc__grp">By closer</div>${listRows(c)}
+      <div class="fc__fn">Reschedules and follow-ups never add. Strategy, Partnership and Visapreneur calendars.</div>`:none}},
+ {id:"q",label:"Qualified",icon:"check",acc:"#4BE0A8",acc2:"#1FB985",tint:"rgba(75,224,168,.16)",
+  front:t=>({v:t.qualified,unit:"",note:!t.booked?"Per setter":(t.qualified+t.unqualified)?pctTxt(t.qualified,t.booked)+" of booked · per setter":"No setter results in this period yet",bar:P(t.qualified,t.booked)}),
+  back:(R,t)=>{const L=[["Qualified",t.qualified,"#4BE0A8"],["Unqualified",t.unqualified,"#FF7A8A"],["No pickup",t.no_pickup,"#FFC266"],["Canceled",t.canceled,"#9C8CFF"]];
+    return t.booked?`<div class="fc__kv">${L.slice(0,3).map(x=>`<div><span>${x[0]}</span><b>${fmt(x[1])}</b></div>`).join("")}</div>
+      <div class="fc__sub" style="margin-top:12px">${L.map(x=>`<div class="fc__row"><span>${x[0]}</span><b>${fmt(x[1])}<em>${pctTxt(x[1],t.booked)}</em></b>
+      <div class="tr"><i style="width:${Math.max(2,x[1]/t.booked*100).toFixed(1)}%;background:${x[2]}"></i></div></div>`).join("")}</div>
+      <div class="fc__fn">Setter results exist for October and from Nov 7. Sep and Nov 1–6 aren't backfilled yet, so they show as No pickup.</div>`:none},
+  list:false},
+ {id:"s1",label:"1st-Call Show Rate",icon:"eye",acc:"#2CC2F5",acc2:"#0A7FD0",tint:"rgba(10,127,208,.2)",
+  front:t=>{const d=t.call1_showed+t.call1_noshow;return {v:P(t.call1_showed,d),unit:"%",note:d?`${fmt(t.call1_showed)} showed · ${fmt(t.call1_noshow)} no-show`:"No calls held yet",bar:P(t.call1_showed,d)}},
+  back:(R,t)=>{const d=t.call1_showed+t.call1_noshow, qd=t.q_call1_showed+t.q_call1_noshow;
+    return d?`<div class="fc__kv"><div><span>All</span><b>${pctTxt(t.call1_showed,d)}</b></div><div><span>Qualified</span><b>${pctTxt(t.q_call1_showed,qd)}</b></div><div><span>No-shows</span><b>${fmt(t.call1_noshow)}</b></div></div>
+      <div class="fc__grp" style="margin-top:12px">By closer</div><div class="fc__sub">${listRows(rateByCloser(R,"call1_showed",x=>x.call1_showed+x.call1_noshow))}</div>
+      <div class="fc__fn">Based on each person's first logged call. Calls not logged yet are left out.</div>`:none}},
+ {id:"b2",label:"2nd Call Booked",sub:"BAMFAM",icon:"repeat",acc:"#9C8CFF",acc2:"#6E5BFF",tint:"rgba(124,104,255,.2)",
+  front:t=>({v:P(t.call2_booked,t.showed_any),unit:"%",note:t.showed_any?`${fmt(t.call2_booked)} of ${fmt(t.showed_any)} who showed`:"No live calls yet",bar:P(t.call2_booked,t.showed_any)}),
+  back:(R,t)=>t.showed_any?`<div class="fc__kv"><div><span>Showed</span><b>${fmt(t.showed_any)}</b></div><div><span>Call 2 set</span><b>${fmt(t.call2_booked)}</b></div><div><span>Rate</span><b>${pctTxt(t.call2_booked,t.showed_any)}</b></div></div>
+      <div class="fc__grp" style="margin-top:12px">By closer</div><div class="fc__sub">${listRows(rateByCloser(R,"call2_booked",x=>x.showed_any),"#9C8CFF")}</div>
+      <div class="fc__fn">Counts when the closer set Deal Status "Follow-Up Booked" on call 1, or a 2nd call was logged.</div>`:none},
+ {id:"s2",label:"2nd-Call Show Rate",icon:"user2",acc:"#FFC266",acc2:"#FF9F2E",tint:"rgba(255,170,60,.16)",
+  front:t=>{const d=t.call2_showed+t.call2_noshow;return {v:P(t.call2_showed,d),unit:"%",note:d?`${fmt(t.call2_showed)} showed · ${fmt(t.call2_noshow)} no-show`:"Tracking from Nov 8",bar:P(t.call2_showed,d)}},
+  back:(R,t)=>{const d=t.call2_showed+t.call2_noshow;
+    return `<div class="fc__kv"><div><span>Held</span><b>${fmt(d)}</b></div><div><span>Showed</span><b>${fmt(t.call2_showed)}</b></div><div><span>No-show</span><b>${fmt(t.call2_noshow)}</b></div></div>
+      ${d?`<div class="fc__grp" style="margin-top:12px">By closer</div><div class="fc__sub">${listRows(rateByCloser(R,"call2_showed",x=>x.call2_showed+x.call2_noshow),"#FFC266")}</div>`:""}
+      <div class="fc__fn">Follow-up calls are tracked from Nov 8 (one-click call log). Before that, follow-ups weren't logged as their own call.</div>`}},
+ {id:"cr",label:"Close Rate",icon:"trophy",acc:"#4BE0A8",acc2:"#00ABE5",tint:"rgba(75,224,168,.14)",
+  front:t=>({v:P(t.won,t.showed_any),unit:"%",note:t.showed_any?`${fmt(t.won)} won of ${fmt(t.showed_any)} who showed`:"No live calls yet",bar:P(t.won,t.showed_any)}),
+  back:(R,t)=>t.showed_any?`<div class="fc__kv"><div><span>Won</span><b>${fmt(t.won)}</b></div><div><span>Offers</span><b>${fmt(t.offered)}</b></div><div><span>Offer → won</span><b>${pctTxt(t.won,t.offered)}</b></div></div>
+      <div class="fc__grp" style="margin-top:12px">By closer</div><div class="fc__sub">${listRows(rateByCloser(R,"won",x=>x.showed_any),"#4BE0A8")}</div>
+      <div class="fc__fn">Won = Deal Status "Won" in GHL. Deals not marked Won in GHL don't count here.</div>`:none}
+];
+
+/* ---------- build cards once ---------- */
+function build(){
+  $("aiGrid").innerHTML=CARDS.map((c,i)=>`
+  <article class="gl-card fc" id="fc_${c.id}" style="--acc:${c.acc};--acc2:${c.acc2};--tint:${c.tint};--chip:${c.tint}">
+    <div class="fc__face" data-face="front">
+      <div class="fc__top"><span class="fc__ic">${svg(IC[c.icon])}</span>
+        <span class="fc__lb">${c.label}${c.sub?`<br><span style="font-size:11.5px;color:var(--t3);font-weight:600">${c.sub}</span>`:""}</span>
+        <button class="fc__btn" data-flip="${c.id}" aria-label="Show ${c.label} stats" title="Show stats">${svg(IC.stats)}</button></div>
+      <div class="fc__val num" id="v_${c.id}">00</div>
+      <div class="fc__note" id="n_${c.id}">Loading</div>
+      <div class="fc__ft">${c.id==="bk"?`<svg class="fc__spark" id="sp_bk" preserveAspectRatio="none"></svg>`:`<div class="fc__bar"><i id="b_${c.id}"></i></div>`}</div>
+    </div>
+    <div class="fc__face" data-face="back" hidden>
+      <div class="fc__top"><span class="fc__bh">${c.label}</span>
+        <button class="fc__btn" data-flip="${c.id}" aria-label="Back to ${c.label}" title="Back">${svg(IC.back)}</button></div>
+      <div class="fc__list" id="bk_${c.id}"></div>
+    </div>
+  </article>`).join("");
+  $("aiGrid").querySelectorAll("[data-flip]").forEach(b=>b.onclick=()=>flip(b.dataset.flip));
+}
+
+/* ---------- reveal: staggered blur + diagonal mask wipe ---------- */
+function reveal(els,base=0){
+  if(RM.matches) return;
+  els.forEach((el,i)=>{
+    el.classList.remove("rv"); void el.offsetWidth;
+    el.style.setProperty("--i",base+i); el.classList.add("rv");
+    el.addEventListener("animationend",()=>{el.classList.remove("rv")},{once:true});
+  });
+}
+
+/* ---------- count-up ---------- */
+function countTo(el,target,unit){
+  if(target==null){el.innerHTML="—";return}
+  const pc=unit==="%", end=pc?target*100:target;
+  const paint=v=>{el.innerHTML=pc?`${Math.round(v)}<small>%</small>`:fmt(v)};
+  if(RM.matches){paint(end);return}
+  const t0=performance.now(), dur=1100;
+  cancelAnimationFrame(el._raf);
+  const step=now=>{const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(2,-10*k);
+    paint(end*(k>=1?1:e)); if(k<1) el._raf=requestAnimationFrame(step)};
+  el._raf=requestAnimationFrame(step);
+}
+
+/* ---------- sparkline (daily bookings) ---------- */
+function spark(R,s,e){
+  const el=$("sp_bk"); if(!el) return;
+  const W=Math.max(200,Math.round(el.getBoundingClientRect().width||300)), H=30;
+  const m={}; R.forEach(r=>{m[r.occurred_date]=(m[r.occurred_date]||0)+N(r.booked)});
+  let ks=Object.keys(m).sort(); if(!ks.length){el.innerHTML="";return}
+  const lo=s>"0000-01-01"?s:ks[0], hi=e<"9999"?(e<today()?e:today()):ks[ks.length-1];
+  const days=[]; for(let d=lo;d<=hi&&days.length<800;d=addDays(d,1)) days.push(d);
+  const step=days.length>70?7:1, vals=[];
+  for(let i=0;i<days.length;i+=step){let v=0;for(let j=i;j<i+step&&j<days.length;j++) v+=m[days[j]]||0; vals.push(v)}
+  if(vals.length<2){el.innerHTML="";return}
+  const mx=Math.max(...vals,1), X=i=>i/(vals.length-1)*W, Y=v=>H-2-(v/mx)*(H-6);
+  const d=vals.map((v,i)=>`${i?"L":"M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(" ");
+  el.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  el.innerHTML=`<defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2CC2F5" stop-opacity=".35"/><stop offset="1" stop-color="#2CC2F5" stop-opacity="0"/></linearGradient></defs>
+    <path d="${d} L${W},${H} L0,${H} Z" fill="url(#spg)"/><path d="${d}" fill="none" stroke="#2CC2F5" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;
+}
+
+/* ---------- paint ---------- */
+let lastKey="";
+function paint(anim){
+  const [s,e,label]=range();
+  const R=A.rows.filter(r=>r.occurred_date>=s&&r.occurred_date<=e&&dimOK(r)), t=sum(R);
+  $("aiSub").textContent=`${label} · people who booked in this period · first booking only`;
+  CARDS.forEach(c=>{
+    const f=c.front(t), v=$("v_"+c.id);
+    if(anim) countTo(v,f.v,f.unit); else v.innerHTML=f.v==null?"—":f.unit==="%"?`${Math.round(f.v*100)}<small>%</small>`:fmt(f.v);
+    $("n_"+c.id).textContent=f.note;
+    const b=$("b_"+c.id); if(b){ b.style.width=anim?"0":b.style.width; requestAnimationFrame(()=>requestAnimationFrame(()=>{b.style.width=((f.bar||0)*100).toFixed(1)+"%"})) }
+    const card=$("fc_"+c.id); if(card._back) $("bk_"+c.id).innerHTML=c.back(R,t);
+  });
+  spark(R,s,e);
+  months();
+  if(anim) reveal([...$("aiGrid").children,$("aiMo")]);
+}
+
+function months(){
+  const R=A.rows.filter(dimOK), g={};
+  R.forEach(r=>{(g[r.booked_month]=g[r.booked_month]||[]).push(r)});
+  const cell=(a,b)=>b>0?`${Math.round(a/b*100)}%<span>${fmt(a)}/${fmt(b)}</span>`:`—<span>&nbsp;</span>`;
+  $("aiMoBody").innerHTML=Object.keys(g).filter(m=>m>="2026-09").sort().reverse().map(m=>{const t=sum(g[m]);
+    return `<tr><td class="m">${new Date(m+"-15T12:00:00Z").toLocaleDateString("en-US",{month:"short",year:"numeric",timeZone:"UTC"})}</td>
+      <td>${fmt(t.booked)}<span>people</span></td>
+      <td>${cell(t.qualified,t.booked)}</td>
+      <td>${cell(t.call1_showed,t.call1_showed+t.call1_noshow)}</td>
+      <td>${cell(t.call2_booked,t.showed_any)}</td>
+      <td>${cell(t.call2_showed,t.call2_showed+t.call2_noshow)}</td>
+      <td>${cell(t.won,t.showed_any)}</td></tr>`}).join("")||`<tr><td colspan="7" style="color:var(--t3)">No data</td></tr>`;
+}
+
+/* ---------- flip ---------- */
+async function flip(id){
+  const c=CARDS.find(x=>x.id===id), card=$("fc_"+id);
+  if(card._busy) return; card._busy=true;
+  const toBack=!card._back, dir=toBack?1:-1;
+  const fr=card.querySelector('[data-face="front"]'), bk=card.querySelector('[data-face="back"]');
+  const swap=()=>{
+    card._back=toBack; fr.hidden=toBack; bk.hidden=!toBack;
+    if(toBack){const [s,e]=range();const R=A.rows.filter(r=>r.occurred_date>=s&&r.occurred_date<=e&&dimOK(r));
+      $("bk_"+id).innerHTML=c.back(R,sum(R));
+      reveal([...bk.querySelectorAll(".fc__kv>div,.fc__row,.fc__grp,.fc__fn")],2)}
+    else reveal([fr.querySelector(".fc__val"),fr.querySelector(".fc__note")]);
+    card.querySelector(`[data-face="${toBack?"back":"front"}"] [data-flip]`).focus({preventScroll:true});
+  };
+  if(RM.matches||!card.animate){swap();card._busy=false;return}
+  const pv="perspective(1200px) ";
+  await card.animate([{transform:pv+"rotateY(0deg) scale(1)"},{transform:pv+`rotateY(${90*dir}deg) scale(.94)`}],
+    {duration:240,easing:"cubic-bezier(.55,0,.85,.4)"}).finished.catch(()=>{});
+  swap();
+  await card.animate([{transform:pv+`rotateY(${-90*dir}deg) scale(.94)`},{transform:pv+`rotateY(${7*dir}deg) scale(1.012)`,offset:.68},{transform:pv+"rotateY(0deg) scale(1)"}],
+    {duration:620,easing:"cubic-bezier(.2,.75,.25,1)"}).finished.catch(()=>{});
+  card._busy=false;
+}
+
+/* ---------- filters ---------- */
+function opts(){
+  const fill=(el,vals,lab,all)=>{const cur=el.value;
+    el.innerHTML=`<option value="">${all}</option>`+vals.map(v=>`<option value="${esc(v)}">${esc(lab(v))}</option>`).join("");
+    el.value=vals.includes(cur)?cur:""};
+  fill($("aiCl"),[...new Set(A.rows.map(r=>r.closer))].sort(),x=>x,"All closers");
+  fill($("aiSr"),[...new Set(A.rows.map(r=>srcName(r.source)))].sort(),x=>x,"All sources");
+}
+function movePill(seg){
+  const on=seg.querySelector('[aria-pressed="true"]'), p=seg.querySelector(".pill");
+  if(on&&p){p.style.left=on.offsetLeft+"px";p.style.width=on.offsetWidth+"px"}
+}
+$("aiPer").querySelectorAll("button").forEach(b=>b.onclick=()=>{
+  $("aiPer").querySelectorAll("button").forEach(x=>x.removeAttribute("aria-pressed"));
+  b.setAttribute("aria-pressed","true"); A.per=b.dataset.p; movePill($("aiPer")); paint(true)});
+$("aiCl").onchange=e=>{A.cl=e.target.value;paint(true)};
+$("aiSr").onchange=e=>{A.sr=e.target.value;paint(true)};
+
+/* ---------- load ---------- */
+async function loadAiden(first){
+  if(A.busy) return; A.busy=true;
+  const ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),20000);
+  try{
+    const r=await fetch(API,{cache:"no-store",signal:ctl.signal,credentials:"omit"});
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    const rows=(Array.isArray(j)?j:[j]).filter(x=>x&&x.occurred_date);
+    const key=JSON.stringify(rows);
+    A.rows=rows; A.ok=true; $("aiGrid").classList.remove("ai-skel"); opts();
+    if(first||key!==lastKey) paint(first||!lastKey); lastKey=key;
+    $("aiStamp").textContent="Updated "+new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+    $("aiStamp").style.color="";
+  }catch(e){
+    $("aiStamp").textContent=A.ok?"Couldn't refresh · showing last data":"No connection · retrying";
+    $("aiStamp").style.color="var(--rose)";
+  }finally{clearTimeout(to);A.busy=false}
+}
+
+/* ---------- tabs ---------- */
+const tabBtns=[...document.querySelectorAll(".tabs [data-tab]")];
+function moveTabPill(){const on=tabBtns.find(b=>b.getAttribute("aria-selected")==="true"),p=$("tabPill");
+  if(on){p.style.left=on.offsetLeft+"px";p.style.width=on.offsetWidth+"px"}}
+function showTab(name,push){
+  const ai=name==="aiden";
+  tabBtns.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===name)));
+  $("tabAiden").hidden=!ai; $("tabSales").hidden=ai;
+  document.body.classList.toggle("ai-on",ai);
+  document.title=ai?"Aiden's Dashboard":"Closer Performance";
+  moveTabPill();
+  if(push) history.replaceState(null,"",ai?"#aiden":location.pathname+location.search);
+  if(ai){
+    requestAnimationFrame(()=>movePill($("aiPer")));
+    if(!A.shown){A.shown=true;build();loadAiden(true)}
+    else if(A.ok) paint(true);
+    if(!A.timer) A.timer=setInterval(()=>{if(!document.hidden&&!$("tabAiden").hidden) loadAiden(false)},60000);
+  } else if(typeof draw==="function") requestAnimationFrame(draw);
+}
+tabBtns.forEach(b=>b.onclick=()=>showTab(b.dataset.tab,true));
+addEventListener("resize",()=>{moveTabPill();movePill($("aiPer"));if(A.ok&&!$("tabAiden").hidden){const[s,e]=range();spark(A.rows.filter(r=>r.occurred_date>=s&&r.occurred_date<=e&&dimOK(r)),s,e)}});
+document.fonts&&document.fonts.ready.then(()=>{moveTabPill();movePill($("aiPer"))});
+showTab(location.hash==="#aiden"?"aiden":"sales",false);
+})();
 </script>
 </body>
 </html>
