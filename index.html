@@ -1112,7 +1112,7 @@ const N=v=>Number(v||0);
 const fmt=v=>Math.round(v).toLocaleString("en-US");
 const P=(a,b)=>b>0?a/b:null;
 const pctTxt=(a,b)=>b>0?Math.round(a/b*100)+"%":"—";
-const SRCN={webinar_lead:"Webinar",vsl_lead:"VSL",e2_lead:"E2",skool_lead:"Skool",lead:"Unassigned","":"Unassigned"};
+const SRCN={webinar_lead:"Webinar",vsl_lead:"VSL",e2_lead:"E2",skool_lead:"Skool",outbound:"Outbound",lead:"Unassigned","":"Unassigned"};
 const srcName=s=>SRCN[s]??s;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const RM=matchMedia("(prefers-reduced-motion: reduce)");
@@ -1160,8 +1160,8 @@ const none='<div class="fc__fn" style="margin-top:14px">Nothing in this period y
 const CARDS=[
  {id:"bk",label:"Booked Calls",icon:"cal",acc:"#2CC2F5",acc2:"#00ABE5",tint:"rgba(44,194,245,.18)",
   front:t=>({v:t.booked,unit:"",note:"People · first booking only",spark:true}),
-  back:(R,t)=>{const s=by(R.map(r=>({...r,src_n:srcName(r.source)})),"src_n").sort((a,b)=>b[1].booked-a[1].booked).map(([k,x])=>({label:k,val:fmt(x.booked),em:pctTxt(x.booked,t.booked),bar:x.booked}));
-    const c=by(R,"closer").sort((a,b)=>b[1].booked-a[1].booked).map(([k,x])=>({label:k,val:fmt(x.booked),bar:x.booked}));
+  back:(R,t)=>{const s=by(R.map(r=>({...r,src_n:srcName(r.source)})),"src_n").filter(x=>x[1].booked>0).sort((a,b)=>b[1].booked-a[1].booked).map(([k,x])=>({label:k,val:fmt(x.booked),em:pctTxt(x.booked,t.booked),bar:x.booked}));
+    const c=by(R,"closer").filter(x=>x[1].booked>0).sort((a,b)=>b[1].booked-a[1].booked).map(([k,x])=>({label:k,val:fmt(x.booked),bar:x.booked}));
     return t.booked?`<div class="fc__grp">By source</div>${listRows(s)}<div class="fc__grp">By closer</div>${listRows(c)}
       <div class="fc__fn">Reschedules and follow-ups never add. Strategy, Partnership and Visapreneur calendars.</div>`:none}},
  {id:"q",label:"Qualified",icon:"check",acc:"#4BE0A8",acc2:"#1FB985",tint:"rgba(75,224,168,.16)",
@@ -1191,10 +1191,13 @@ const CARDS=[
       ${d?`<div class="fc__grp" style="margin-top:12px">By closer</div><div class="fc__sub">${listRows(rateByCloser(R,"call2_showed",x=>x.call2_showed+x.call2_noshow),"#FFC266")}</div>`:""}
       <div class="fc__fn">October is checked by hand from GHL calendars, Fathom recordings and texts. Cancelled 2nd calls count as no-shows. Upcoming calls aren't counted yet. From Nov 8 the call log tracks this live; Sep and Nov 1–7 aren't checked yet.</div>`}},
  {id:"cr",label:"Close Rate",icon:"trophy",acc:"#4BE0A8",acc2:"#00ABE5",tint:"rgba(75,224,168,.14)",
-  front:t=>({v:P(t.won,t.showed_any),unit:"%",note:t.showed_any?`${fmt(t.won)} won of ${fmt(t.showed_any)} who showed`:"No live calls yet",bar:P(t.won,t.showed_any)}),
-  back:(R,t)=>t.showed_any?`<div class="fc__kv"><div><span>Won</span><b>${fmt(t.won)}</b></div><div><span>Offers</span><b>${fmt(t.offered)}</b></div><div><span>Offer → won</span><b>${pctTxt(t.won,t.offered)}</b></div></div>
-      <div class="fc__grp" style="margin-top:12px">By closer</div><div class="fc__sub">${listRows(rateByCloser(R,"won",x=>x.showed_any),"#4BE0A8")}</div>
-      <div class="fc__fn">Won = Deal Status "Won" in GHL. Deals not marked Won in GHL don't count here.</div>`:none}
+  front:t=>({v:P(t.won,t.showed_any),unit:"%",note:t.won||t.showed_any?`${fmt(t.won)} deal${t.won===1?"":"s"} closed · ${fmt(t.showed_any)} showed`:"No deals yet",bar:P(t.won,t.showed_any)}),
+  back:(R,t)=>{ if(!t.won&&!t.showed_any) return none;
+    const L=by(R,"closer").filter(([k,x])=>x.won||x.showed_any).sort((a,b)=>b[1].won-a[1].won||b[1].showed_any-a[1].showed_any)
+      .map(([k,x])=>({label:k,val:fmt(x.won)+(x.won===1?" deal":" deals"),em:x.showed_any?Math.round(x.won/x.showed_any*100)+"%":"direct",bar:x.won}));
+    return `<div class="fc__kv"><div><span>Deals</span><b>${fmt(t.won)}</b></div><div><span>Collected</span><b>$${t.cash>=1000?Math.round(t.cash/1000)+"k":fmt(t.cash)}</b></div><div><span>Showed</span><b>${fmt(t.showed_any)}</b></div></div>
+      <div class="fc__grp" style="margin-top:12px">By closer</div><div class="fc__sub">${listRows(L,"#4BE0A8")}</div>
+      <div class="fc__fn">Deals come from Slack #payment-success and count in the month they closed. Rate = deals ÷ people who showed for call 1 that month. Sam's direct deals show as "direct" (outbound).</div>`}}
 ];
 
 /* ---------- build cards once ---------- */
