@@ -1155,8 +1155,8 @@ const $=id=>document.getElementById(id);
 const A={rows:[],ok:false,per:"m",cl:"",sr:"",busy:false,timer:null,shown:false};
 const N=v=>Number(v||0);
 const fmt=v=>Math.round(v).toLocaleString("en-US");
-const P=(a,b)=>b>0?a/b:null;
-const pctTxt=(a,b)=>b>0?Math.round(a/b*100)+"%":"—";
+const P=(a,b)=>b>0?a/b:0;   /* nothing to divide yet -> 0, not a blank */
+const pctTxt=(a,b)=>b>0?Math.round(a/b*100)+"%":"0%";
 const SRCN={webinar_lead:"Webinar",vsl_lead:"VSL",e2_lead:"E2",webinar:"Webinar",vsl:"VSL",e2:"E2",outbound:"Outbound",referral:"Referral"};
 const srcName=s=>SRCN[String(s||"").toLowerCase()]||"Outbound";
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
