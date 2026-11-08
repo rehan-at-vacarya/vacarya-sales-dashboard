@@ -728,14 +728,15 @@ function draw(){
   f4.textContent=f(t.fns); f4s.textContent=met?pct(t.fns,met)+" of calls due":"—";
   f5.textContent=f(t.of); f5s.textContent=t.sh?pct(t.of,t.sh)+" of showed":"—";
   f6.textContent=f(t.fp);
-  f7.textContent=f(t.fw); f7s.textContent=t.sh?pct(t.fw,t.sh)+" of showed":"—";
-  f8.textContent=f(t.fl); f8s.textContent=t.sh?pct(t.fl,t.sh)+" of showed":"—";
+  /* Won / Lost = deals closed in this range (Won = paid, Slack #payment-success), same rule as Funnel Metrics */
+  f7.textContent=f(t.won); f7s.textContent=t.sh?pct(t.won,t.sh)+" of showed · paid in range":"Paid in range";
+  f8.textContent=f(t.lost); f8s.textContent=t.sh?pct(t.lost,t.sh)+" of showed · lost in range":"Lost in range";
   m5.textContent=money(t.cash);
-  m5s.textContent=f(t.won)+" deal"+(t.won===1?"":"s")+" marked Won in this range";
+  m5s.textContent=f(t.won)+" paid deal"+(t.won===1?"":"s")+" in this range";
   c1.textContent=t.bk?cash2(t.cash/t.bk):"—";
   c2.textContent=t.l?cash2(t.cash/t.l):"—";
-  r1.textContent=pct(t.sh,met); r2.textContent=pct(t.of,t.sh); r3.textContent=pct(t.fw,t.sh);
-  r4.textContent=pct(t.fw,t.of); r5.textContent=pct(t.cx,t.bk);
+  r1.textContent=pct(t.sh,met); r2.textContent=pct(t.of,t.sh); r3.textContent=pct(t.won,t.sh);
+  r4.textContent=pct(t.won,t.of); r5.textContent=pct(t.cx,t.bk);
   x1.textContent=f(t.l); x2.textContent=f(t.fu); x3.textContent=f(t.pend);
   x5.textContent=pct(t.w2+t.w3,t.c2+t.c3);
   x5s.textContent=f(t.w2+t.w3)+" won of "+f(t.c2+t.c3)+" follow-up calls";
