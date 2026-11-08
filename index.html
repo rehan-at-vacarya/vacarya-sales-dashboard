@@ -12,7 +12,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0D0F13; --surface:#171A20; --surface-2:#1E222A; --border:#262A32;
+  --bg:#0B0D11; --surface:#171A20; --surface-2:#1E222A; --border:#262A32;
+  /* glass: flat translucent layers + hairline edges (no gradients) */
+  --glass-1:rgba(255,255,255,.032); --glass-2:rgba(255,255,255,.055); --glass-3:rgba(255,255,255,.09);
+  --line:rgba(255,255,255,.075); --line-2:rgba(255,255,255,.14); --hi:inset 0 1px 0 rgba(255,255,255,.05);
   --text:#F0F2F5; --muted:#8A9099; --subtle:#5C636E;
   --accent:#4C8DFF; --green:#3DD68C; --red:#F2686B;
   --c1:#4C8DFF; --c2:#3DD68C; --c3:#9B7DFF; --c4:#2DD4BF; --c5:#F5A623; --c6:#6B7280;
@@ -25,28 +28,57 @@ body{margin:0;background:var(--bg);color:var(--text);font:400 14px/1.45 var(--fo
 .num{font-variant-numeric:tabular-nums;letter-spacing:-.03em}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-.bar{display:flex;align-items:center;gap:10px;padding:16px 28px;border-bottom:1px solid var(--border);
-  flex-wrap:wrap;position:sticky;top:0;z-index:30;background:rgba(13,15,19,.92);backdrop-filter:blur(10px)}
+.bar{display:flex;align-items:center;gap:10px;padding:16px 28px;border-bottom:1px solid rgba(255,255,255,.06);
+  flex-wrap:wrap;position:sticky;top:0;z-index:30;background:rgba(11,13,17,.74);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%)}
 .mark{height:26px;width:auto;display:block;opacity:.95;margin-right:2px}
 .bar h1{margin:0;font-family:var(--font-head);font-size:18px;font-weight:600;letter-spacing:-.02em}
 .stamp{font-size:11px;color:var(--subtle);font-variant-numeric:tabular-nums}
 .stamp.err{color:var(--red)}
 .bar .right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
-.seg{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:2px}
-.seg button{height:26px;padding:0 11px;border:0;background:none;border-radius:6px;color:var(--muted);
-  font:500 12px var(--font);cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--text)}
-select{height:30px;padding:0 26px 0 10px;background:var(--surface);color:var(--text);
-  border:1px solid var(--border);border-radius:8px;font:500 12px var(--font);cursor:pointer;appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A9099' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 9px center}
-.dinp{height:30px;padding:0 8px;background:var(--surface);color:var(--text);
-  border:1px solid var(--border);border-radius:8px;font:500 12px var(--font);
-  color-scheme:dark;cursor:pointer}
-.ghost{height:30px;padding:0 11px;background:none;border:1px solid var(--border);border-radius:8px;
-  color:var(--subtle);font:500 12px var(--font);cursor:pointer;transition:color .12s,border-color .12s}
-.ghost:hover{color:var(--text)}
+.seg{display:flex;background:var(--glass-1);border:1px solid var(--line);border-radius:10px;padding:2px;
+  box-shadow:var(--hi)}
+.seg button{height:26px;padding:0 11px;border:0;background:none;border-radius:7px;color:var(--muted);
+  font:500 12px var(--font);cursor:pointer;transition:color .15s,background-color .15s}
+.seg button:hover{color:var(--text)}
+.seg button[aria-pressed="true"]{background:var(--glass-3);color:var(--text);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.dinp{height:30px;padding:0 8px;background:var(--glass-1);color:var(--text);
+  border:1px solid var(--line);border-radius:9px;font:500 12px var(--font);
+  color-scheme:dark;cursor:pointer;transition:border-color .15s}
+.dinp:hover{border-color:var(--line-2)}
+.ghost{height:30px;padding:0 11px;background:var(--glass-1);border:1px solid var(--line);border-radius:9px;
+  color:var(--muted);font:500 12px var(--font);cursor:pointer;transition:color .15s,border-color .15s,background-color .15s}
+.ghost:hover{color:var(--text);border-color:var(--line-2);background:var(--glass-2)}
+
+/* ---- dropdown: replaces the OS list. The real <select> stays hidden and keeps driving the data. ---- */
+.dd{position:relative;display:inline-flex;vertical-align:middle}
+.dd__native{position:absolute!important;left:0;top:0;width:1px!important;height:1px!important;opacity:0;pointer-events:none}
+.dd__btn{display:inline-flex;align-items:center;gap:8px;width:100%;height:30px;padding:0 9px 0 12px;min-width:124px;
+  background:var(--glass-1);border:1px solid var(--line);border-radius:9px;color:var(--text);box-shadow:var(--hi);
+  font:500 12px var(--font);cursor:pointer;white-space:nowrap;transition:border-color .15s,background-color .15s}
+.dd__btn:hover{border-color:var(--line-2);background:var(--glass-2)}
+.dd.on .dd__btn{border-color:rgba(255,255,255,.22);background:var(--glass-2)}
+.dd__lab{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis}
+.dd__btn svg{width:13px;height:13px;flex:none;stroke:var(--muted);fill:none;stroke-width:2.2;stroke-linecap:round;
+  stroke-linejoin:round;transition:transform .2s}
+.dd.on .dd__btn svg{transform:rotate(180deg)}
+.dd__pop{position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:100%;width:max-content;
+  max-width:min(300px,calc(100vw - 24px));max-height:min(340px,60vh);overflow:auto;padding:5px;outline:none;
+  background:rgba(16,18,23,.94);-webkit-backdrop-filter:blur(20px) saturate(140%);backdrop-filter:blur(20px) saturate(140%);
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;scrollbar-width:thin;
+  box-shadow:0 20px 44px -14px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05);animation:ddIn .14s ease-out}
+.dd__pop[hidden]{display:none}
+.dd.flip .dd__pop{left:auto;right:0}
+@keyframes ddIn{from{opacity:0;transform:translateY(-4px)}}
+.dd__opt{display:flex;align-items:center;gap:9px;padding:8px 12px 8px 9px;border-radius:8px;font-size:12.5px;
+  color:var(--muted);cursor:pointer;white-space:nowrap;user-select:none}
+.dd__opt svg{width:13px;height:13px;flex:none;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;
+  stroke-linejoin:round;opacity:0}
+.dd__opt.hi{background:rgba(255,255,255,.07);color:var(--text)}
+.dd__opt[aria-selected="true"]{color:var(--text);font-weight:500}
+.dd__opt[aria-selected="true"] svg{opacity:1;color:var(--accent)}
+@media(prefers-reduced-motion:reduce){.dd__pop{animation:none}.dd__btn svg{transition:none}}
 .ghost.ico{width:30px;padding:0;display:inline-flex;align-items:center;justify-content:center}
 .ghost.ico svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;fill:none;
   stroke-linecap:round;stroke-linejoin:round}
@@ -62,7 +94,7 @@ select{height:30px;padding:0 26px 0 10px;background:var(--surface);color:var(--t
 .sec__h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .sec__h span{font-family:var(--font-head);font-size:12px;font-weight:600;letter-spacing:.16em;
   text-transform:uppercase;color:var(--muted);white-space:nowrap}
-.sec__h i{flex:1;height:1px;background:var(--border)}
+.sec__h i{flex:1;height:1px;background:rgba(255,255,255,.06)}
 
 .row{display:grid;gap:14px}
 .r5{grid-template-columns:repeat(5,1fr)}
@@ -71,7 +103,9 @@ select{height:30px;padding:0 26px 0 10px;background:var(--surface);color:var(--t
 .r3{grid-template-columns:1fr 1.15fr 1.15fr}
 .r3e{grid-template-columns:repeat(3,1fr)}
 
-.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.card{background:var(--glass-1);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+  box-shadow:var(--hi),0 14px 34px -22px rgba(0,0,0,.9);transition:border-color .2s,background-color .2s}
+.card:hover{border-color:rgba(255,255,255,.11);background:rgba(255,255,255,.04)}
 .card h2{margin:0 0 16px;font-family:var(--font-head);font-size:14px;font-weight:600;
   letter-spacing:-.01em;color:var(--text)}
 .k{font-size:12px;color:var(--muted);margin-bottom:8px}
@@ -83,8 +117,8 @@ select{height:30px;padding:0 26px 0 10px;background:var(--surface);color:var(--t
 .row>*{min-width:0}
 
 /* first-paint skeleton -- matches the final layout, no full-page spinner */
-.boot .v{color:transparent;background:linear-gradient(90deg,#1E222A,#252A33,#1E222A);
-  background-size:200% 100%;border-radius:5px;animation:sh 1.1s ease-in-out infinite}
+.boot .v{color:transparent;background:rgba(255,255,255,.06);border-radius:6px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
 @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
 @media(prefers-reduced-motion:reduce){.boot .v{animation:none}}
 
@@ -107,11 +141,12 @@ select{height:30px;padding:0 26px 0 10px;background:var(--surface);color:var(--t
 
 /* ---- tooltip ---- */
 .tip{position:fixed;z-index:100;pointer-events:none;opacity:0;transition:opacity .1s;
-  background:#0B0D12;border:1px solid #39414F;border-radius:10px;padding:12px 14px;
-  box-shadow:0 14px 38px rgba(0,0,0,.6);font-size:13px;min-width:206px}
+  background:rgba(13,15,20,.9);-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);
+  border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 14px;
+  box-shadow:0 18px 40px -10px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.05);font-size:13px;min-width:206px}
 .tip.on{opacity:1}
 .tip__t{font-family:var(--font-head);font-size:14px;font-weight:600;color:var(--text);
-  padding-bottom:9px;margin-bottom:2px;border-bottom:1px solid #262C36;
+  padding-bottom:9px;margin-bottom:2px;border-bottom:1px solid rgba(255,255,255,.08);
   font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .tip__r{display:flex;align-items:center;gap:9px;padding:8px 0 7px;
   border-bottom:1px solid rgba(255,255,255,.045);transition:opacity .1s}
@@ -131,7 +166,7 @@ select{height:30px;padding:0 26px 0 10px;background:var(--surface);color:var(--t
 .dleg{display:flex;flex-direction:column;gap:8px;margin-top:16px}
 .dleg div{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);cursor:default;
   padding:2px 4px;border-radius:5px}
-.dleg div:hover{background:var(--surface-2);color:var(--text)}
+.dleg div:hover{background:rgba(255,255,255,.05);color:var(--text)}
 .dleg b{margin-left:auto;color:var(--text);font-weight:500;font-variant-numeric:tabular-nums}
 .dleg em{font-style:normal;color:var(--subtle);font-size:11px;margin-left:6px}
 
@@ -142,10 +177,11 @@ th:first-child{text-align:left;padding-left:0}
 th[data-s]{cursor:pointer;user-select:none}
 th[data-s]:hover{color:var(--muted)}
 th[data-s].on{color:var(--accent)}
-td{padding:12px;text-align:right;font-size:13px;border-top:1px solid var(--border);
+td{padding:12px;text-align:right;font-size:13px;border-top:1px solid rgba(255,255,255,.06);
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 td:first-child{text-align:left;padding-left:0;letter-spacing:0}
-tbody tr:hover{background:var(--surface-2)}
+tbody tr{transition:background-color .15s}
+tbody tr:hover{background:rgba(255,255,255,.035)}
 table.tight td{padding:10px 12px}
 
 .ob{display:flex;flex-direction:column;gap:13px}
@@ -153,7 +189,7 @@ table.tight td{padding:10px 12px}
 .ob__t{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
 .ob__row:hover .ob__t{color:var(--text)}
 .ob__t b{color:var(--text);font-weight:500;font-variant-numeric:tabular-nums}
-.ob__tr{height:5px;background:var(--surface-2);border-radius:99px;overflow:hidden;display:flex}
+.ob__tr{height:5px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;display:flex}
 .ob__lost{height:100%;background:var(--accent)}
 .ob__won{height:100%;background:var(--green)}
 
@@ -188,13 +224,13 @@ table.tight td{padding:10px 12px}
   white-space:nowrap;transition:color .3s}
 .tabs button[aria-selected="true"]{color:#fff}
 .tabs__pill{position:absolute;top:4px;bottom:4px;left:4px;width:0;border-radius:999px;
-  background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.1));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 6px 18px -4px rgba(0,0,0,.5);
+  background:rgba(255,255,255,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 18px -4px rgba(0,0,0,.5);
   transition:left .5s cubic-bezier(.3,1.35,.5,1),width .5s cubic-bezier(.3,1.35,.5,1)}
 body.ai-on .bar .right{display:none}
 body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255,.06)}
 
-/* ================= Aiden's Dashboard (dark glass) ================= */
+/* ================= Funnel Metrics (dark glass) ================= */
 .ai{--ai-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",ui-sans-serif,system-ui,sans-serif;
   --glass:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.035) 55%,rgba(255,255,255,.05));
   --edge:rgba(255,255,255,.13); --hi:rgba(255,255,255,.22);
@@ -228,6 +264,16 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
   border:1px solid rgba(255,255,255,.1);color:var(--t1);font:600 12.5px var(--ai-font);
   -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);background-position:right 11px center}
 .ai-sel option{background:#10141C}
+.dd.ai-dd .dd__btn{height:36px;min-width:132px;padding:0 11px 0 14px;border-radius:13px;background:rgba(255,255,255,.07);
+  border-color:rgba(255,255,255,.1);color:var(--t1);font:600 12.5px var(--ai-font);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.dd.ai-dd .dd__btn:hover,.dd.ai-dd.on .dd__btn{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.18)}
+.dd.ai-dd .dd__btn svg{stroke:var(--t2)}
+.dd.ai-dd .dd__pop{border-radius:16px;padding:6px;background:rgba(14,18,28,.9);border-color:rgba(255,255,255,.12)}
+.dd.ai-dd .dd__opt{font:500 13px var(--ai-font);color:var(--t2);border-radius:10px;padding:9px 12px 9px 10px}
+.dd.ai-dd .dd__opt.hi{background:rgba(255,255,255,.09);color:var(--t1)}
+.dd.ai-dd .dd__opt[aria-selected="true"]{color:var(--t1)}
+.dd.ai-dd .dd__opt[aria-selected="true"] svg{color:var(--blue)}
 .ai-stamp{font-size:12px;color:var(--t3);font-variant-numeric:tabular-nums;width:100%;text-align:right}
 
 .ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -319,7 +365,7 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
   .tabs{padding:12px 12px 0}.tabs button{padding:0 13px;font-size:12.5px}
   .ai{padding:22px 16px 56px}.ai-title{font-size:28px}
   .ai-ctl{margin-left:0;width:100%}.ai-seg{width:100%}.ai-seg button{flex:1;padding:0 6px}
-  .ai-sel{flex:1;min-width:0}.ai-stamp{text-align:left}
+  .ai-sel{flex:1;min-width:0}.ai-ctl .dd{flex:1;min-width:0}.ai-ctl .dd__btn{min-width:0}.ai-stamp{text-align:left}
   .ai-grid{grid-template-columns:1fr;gap:14px}.fc{height:256px}.fc__val{font-size:50px}
   .ai-mo{padding:18px 16px 6px}}
 @media(prefers-reduced-motion:reduce){
@@ -345,8 +391,8 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
       <input type="date" id="d1" class="dinp"><span style="color:var(--subtle);font-size:12px">to</span>
       <input type="date" id="d2" class="dinp">
     </span>
-    <select id="cf"><option value="">All closers</option></select>
-    <select id="sf"><option value="">All sources</option></select>
+    <select id="cf" data-dd aria-label="Closer"><option value="">All closers</option></select>
+    <select id="sf" data-dd aria-label="Source"><option value="">All sources</option></select>
     <button class="ghost" id="ex">Export</button>
     <button class="ghost ico" id="rf" title="Refresh data" aria-label="Refresh data">
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -360,7 +406,7 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
   <div class="tabs__in" role="tablist">
     <span class="tabs__pill" id="tabPill"></span>
     <button role="tab" id="tabBtnSales" data-tab="sales" aria-selected="true" aria-controls="tabSales">Closer Performance</button>
-    <button role="tab" id="tabBtnAiden" data-tab="aiden" aria-selected="false" aria-controls="tabAiden">Aiden's Dashboard</button>
+    <button role="tab" id="tabBtnAiden" data-tab="aiden" aria-selected="false" aria-controls="tabAiden">Funnel Metrics</button>
   </div>
 </nav>
 
@@ -368,7 +414,7 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
   <div class="ai-bg" aria-hidden="true"><i></i><i></i><i></i></div>
   <header class="ai-head">
     <div>
-      <h1 class="ai-title">Aiden's Dashboard</h1>
+      <h1 class="ai-title">Funnel Metrics</h1>
       <p class="ai-sub" id="aiSub">People who booked in this period · first booking only</p>
     </div>
     <div class="ai-ctl">
@@ -379,8 +425,8 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
         <button data-p="90">90 days</button>
         <button data-p="all">All time</button>
       </div>
-      <select class="ai-sel" id="aiCl" aria-label="Closer"><option value="">All closers</option></select>
-      <select class="ai-sel" id="aiSr" aria-label="Source"><option value="">All sources</option></select>
+      <select class="ai-sel" id="aiCl" data-dd="ai-dd" aria-label="Closer"><option value="">All closers</option></select>
+      <select class="ai-sel" id="aiSr" data-dd="ai-dd" aria-label="Source"><option value="">All sources</option></select>
       <div class="ai-stamp" id="aiStamp">Loading…</div>
     </div>
   </header>
@@ -541,11 +587,12 @@ const yes=v=>v===true||v==="true";
 const isF=r=>n(r.ap_booked)>0;
 const PAL=["#4C8DFF","#3DD68C","#9B7DFF","#2DD4BF","#F5A623","#6B7280"];
 
-/* source labels -- raw contact_type keys are ugly */
-const SRC={webinar_lead:"Webinar",vsl_lead:"VSL",e2_lead:"E2",skool_lead:"Skool",lead:"Unassigned"};
-const src=s=>{ if(!s) return "Unassigned";
+/* sources come from BigQuery already final: Webinar / VSL / E2 / Outbound / Referral */
+const SRC={webinar:"Webinar",vsl:"VSL",e2:"E2",outbound:"Outbound",referral:"Referral",
+           webinar_lead:"Webinar",vsl_lead:"VSL",e2_lead:"E2"};
+const src=s=>{ if(!s) return "Outbound";
   const k=String(s).toLowerCase().replace(/\s+/g,"_");
-  return SRC[k] || name(s); };
+  return SRC[k] || "Outbound"; };
 
 /* ---------- tooltip ---------- */
 const TIP=document.getElementById("tip");
@@ -1004,13 +1051,10 @@ function drawMini(svg,keys,vals,m){
   if(cur.length>1)segs.push(cur);
   const lines=segs.map(sg=>`<path class="ln" d="M${sg.join(" L")}" stroke="var(--accent)"/>`).join("");
   const area=segs.map(sg=>{const a=sg[0].split(",")[0],b=sg[sg.length-1].split(",")[0];
-    return `<path class="ar" d="M${a},${PT+ih} L${sg.join(" L")} L${b},${PT+ih} Z" fill="url(#gr_${m.id})" stroke="none"/>`}).join("");
+    return `<path class="ar" d="M${a},${PT+ih} L${sg.join(" L")} L${b},${PT+ih} Z" fill="rgba(76,141,255,.09)" stroke="none"/>`}).join("");
 
   svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
-  svg.innerHTML=`<defs><linearGradient id="gr_${m.id}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4C8DFF" stop-opacity=".26"/>
-      <stop offset="100%" stop-color="#4C8DFF" stop-opacity="0"/></linearGradient></defs>
-    ${grid}${area}${lines}
+  svg.innerHTML=`${grid}${area}${lines}
     <line class="cursor" id="mc" x1="0" y1="${PT}" x2="0" y2="${PT+ih}" opacity="0"/>
     <circle id="mp" r="4.5" fill="#4C8DFF" stroke="#0D0F13" stroke-width="2.5" opacity="0"/>`;
 
@@ -1085,7 +1129,7 @@ ex.onclick=csv;
 rf.onclick=()=>load();
 addEventListener("keydown",e=>{
   if((e.key==="r"||e.key==="R")&&!e.metaKey&&!e.ctrlKey&&
-     !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)){e.preventDefault();load()}});
+     !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)&&!document.activeElement.closest(".dd")){e.preventDefault();load()}});
 addEventListener("scroll",hideTip,{passive:true});
 let rz; addEventListener("resize",()=>{hideTip();clearTimeout(rz);rz=setTimeout(draw,140)});
 
@@ -1101,7 +1145,7 @@ startPoll();
 </script>
 
 <script>
-/* ============ Aiden's Dashboard ============
+/* ============ Funnel Metrics (was "Aiden's Dashboard") ============
    Data: n8n /webhook/dashboard-aiden -> BigQuery mart_aiden (from fct_followups + fct_bookings).
    One row per booked_date x closer x source. Everything is a cohort of people by FIRST booking date. */
 (function(){
@@ -1112,8 +1156,8 @@ const N=v=>Number(v||0);
 const fmt=v=>Math.round(v).toLocaleString("en-US");
 const P=(a,b)=>b>0?a/b:null;
 const pctTxt=(a,b)=>b>0?Math.round(a/b*100)+"%":"—";
-const SRCN={webinar_lead:"Webinar",vsl_lead:"VSL",e2_lead:"E2",skool_lead:"Skool",outbound:"Outbound",lead:"Unassigned","":"Unassigned"};
-const srcName=s=>SRCN[s]??s;
+const SRCN={webinar_lead:"Webinar",vsl_lead:"VSL",e2_lead:"E2",webinar:"Webinar",vsl:"VSL",e2:"E2",outbound:"Outbound",referral:"Referral"};
+const srcName=s=>SRCN[String(s||"").toLowerCase()]||"Outbound";
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const RM=matchMedia("(prefers-reduced-motion: reduce)");
 const today=()=>new Intl.DateTimeFormat("en-CA",{timeZone:"America/Toronto"}).format(new Date());
@@ -1365,7 +1409,8 @@ function showTab(name,push){
   tabBtns.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===name)));
   $("tabAiden").hidden=!ai; $("tabSales").hidden=ai;
   document.body.classList.toggle("ai-on",ai);
-  document.title=ai?"Aiden's Dashboard":"Closer Performance";
+  document.title=ai?"Funnel Metrics":"Closer Performance";
+  document.querySelector(".bar h1").textContent=document.title;
   moveTabPill();
   if(push) history.replaceState(null,"",ai?"#aiden":location.pathname+location.search);
   if(ai){
@@ -1379,6 +1424,89 @@ tabBtns.forEach(b=>b.onclick=()=>showTab(b.dataset.tab,true));
 addEventListener("resize",()=>{moveTabPill();movePill($("aiPer"));if(A.ok&&!$("tabAiden").hidden){const[s,e]=range();spark(A.rows.filter(r=>r.occurred_date>=s&&r.occurred_date<=e&&dimOK(r)),s,e)}});
 document.fonts&&document.fonts.ready.then(()=>{moveTabPill();movePill($("aiPer"))});
 showTab(location.hash==="#aiden"?"aiden":"sales",false);
+})();
+</script>
+<script>
+/* ============ dropdowns ============
+   Custom list instead of the OS one (old blue-hover menu). The real <select> stays in the page, hidden:
+   picking an item sets select.value and fires "change", so all existing filter code runs unchanged.
+   Options are re-read whenever the page rebuilds them. Keyboard: arrows, Home/End, Enter, Esc, type-ahead. */
+(function(){
+  const CHEV='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  const CHK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+  let open=null;
+  function close(focusBtn){
+    if(!open) return; const o=open; open=null;
+    o.wrap.classList.remove("on"); o.btn.setAttribute("aria-expanded","false"); o.pop.hidden=true;
+    if(focusBtn) o.btn.focus({preventScroll:true});
+  }
+  function enhance(sel,n){
+    const wrap=document.createElement("div"); wrap.className=("dd "+(sel.dataset.dd||"")).trim();
+    sel.parentNode.insertBefore(wrap,sel); wrap.appendChild(sel);
+    sel.tabIndex=-1; sel.setAttribute("aria-hidden","true"); sel.classList.add("dd__native");
+    const btn=document.createElement("button"); btn.type="button"; btn.className="dd__btn";
+    btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false");
+    if(sel.getAttribute("aria-label")) btn.setAttribute("aria-label",sel.getAttribute("aria-label"));
+    btn.innerHTML='<span class="dd__lab"></span>'+CHEV;
+    const pop=document.createElement("div"); pop.className="dd__pop"; pop.hidden=true; pop.tabIndex=-1;
+    pop.setAttribute("role","listbox"); pop.id="dd"+n;
+    if(sel.getAttribute("aria-label")) pop.setAttribute("aria-label",sel.getAttribute("aria-label"));
+    btn.setAttribute("aria-controls",pop.id);
+    wrap.append(btn,pop);
+    const o={wrap,btn,pop}, lab=btn.querySelector(".dd__lab");
+    const sync=()=>{const op=sel.options[sel.selectedIndex]; lab.textContent=op?op.textContent:""};
+    function build(){
+      pop.innerHTML="";
+      [...sel.options].forEach((op,i)=>{
+        const d=document.createElement("div"); d.className="dd__opt"; d.setAttribute("role","option");
+        d.id=pop.id+"_"+i; d.dataset.i=i; d.setAttribute("aria-selected",String(i===sel.selectedIndex));
+        d.innerHTML=CHK+"<span></span>"; d.lastChild.textContent=op.textContent; pop.appendChild(d)});
+    }
+    function hi(i,scroll){
+      const it=pop.children; if(!it.length) return;
+      i=Math.max(0,Math.min(it.length-1,i)); pop.dataset.hi=i;
+      [...it].forEach((el,k)=>el.classList.toggle("hi",k===i));
+      pop.setAttribute("aria-activedescendant",it[i].id);
+      if(scroll) it[i].scrollIntoView({block:"nearest"});
+    }
+    function show(){
+      if(open&&open!==o) close(false);
+      build(); pop.hidden=false; wrap.classList.add("on"); btn.setAttribute("aria-expanded","true"); open=o;
+      wrap.classList.remove("flip");
+      if(pop.getBoundingClientRect().right>innerWidth-8) wrap.classList.add("flip");
+      hi(Math.max(0,sel.selectedIndex),true); pop.focus({preventScroll:true});
+    }
+    function pick(i){
+      if(i!==sel.selectedIndex){sel.selectedIndex=i; sel.dispatchEvent(new Event("change",{bubbles:true}))}
+      sync(); close(true);
+    }
+    btn.addEventListener("click",()=>open===o?close(false):show());
+    btn.addEventListener("keydown",e=>{if(["ArrowDown","ArrowUp","Enter"," "].includes(e.key)){e.preventDefault();show()}});
+    pop.addEventListener("click",e=>{const it=e.target.closest(".dd__opt"); if(it) pick(+it.dataset.i)});
+    pop.addEventListener("mousemove",e=>{const it=e.target.closest(".dd__opt"); if(it&&+pop.dataset.hi!==+it.dataset.i) hi(+it.dataset.i,false)});
+    pop.addEventListener("keydown",e=>{
+      const i=+pop.dataset.hi||0, n=pop.children.length;
+      if(e.key==="ArrowDown"){e.preventDefault();hi(i+1,true)}
+      else if(e.key==="ArrowUp"){e.preventDefault();hi(i-1,true)}
+      else if(e.key==="Home"){e.preventDefault();hi(0,true)}
+      else if(e.key==="End"){e.preventDefault();hi(n-1,true)}
+      else if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(i)}
+      else if(e.key==="Escape"){e.preventDefault();close(true)}
+      else if(e.key==="Tab"){close(false)}
+      else if(e.key.length===1&&!e.metaKey&&!e.ctrlKey){
+        const k=e.key.toLowerCase();
+        for(let s=1;s<=n;s++){const j=(i+s)%n; if(sel.options[j].textContent.trim().toLowerCase().startsWith(k)){hi(j,true);break}}
+      }
+    });
+    /* the dashboards rebuild the <option>s on every refresh -- keep label and open list in step */
+    new MutationObserver(()=>{sync(); if(open===o){build(); hi(Math.max(0,sel.selectedIndex),false)}})
+      .observe(sel,{childList:true,subtree:true,characterData:true});
+    sel.addEventListener("change",sync);
+    sync();
+  }
+  document.addEventListener("pointerdown",e=>{if(open&&!open.wrap.contains(e.target)) close(false)});
+  addEventListener("resize",()=>close(false));
+  document.querySelectorAll("select[data-dd]").forEach(enhance);
 })();
 </script>
 </body>
