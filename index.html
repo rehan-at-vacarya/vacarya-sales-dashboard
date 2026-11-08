@@ -1131,7 +1131,7 @@ function range(){
 }
 const dimOK=r=>(!A.cl||r.closer===A.cl)&&(!A.sr||srcName(r.source)===A.sr);
 const KEYS=["booked","qualified","unqualified","no_pickup","canceled","call1_showed","call1_noshow","q_call1_showed",
-  "q_call1_noshow","showed_any","offered","call2_booked","call2_showed","call2_noshow","won","cash"];
+  "q_call1_noshow","showed_any","offered","call2_booked","call2_showed","call2_noshow","call2_pending","call2_claimed_only","live_calls","stitched","won","cash"];
 function sum(R){const t={};KEYS.forEach(k=>t[k]=0);R.forEach(r=>KEYS.forEach(k=>t[k]+=N(r[k])));return t}
 function by(R,key){const o={};R.forEach(r=>{(o[r[key]]=o[r[key]]||[]).push(r)});return Object.entries(o).map(([k,v])=>[k,sum(v)])}
 
@@ -1182,13 +1182,14 @@ const CARDS=[
   front:t=>({v:P(t.call2_booked,t.showed_any),unit:"%",note:t.showed_any?`${fmt(t.call2_booked)} of ${fmt(t.showed_any)} who showed`:"No live calls yet",bar:P(t.call2_booked,t.showed_any)}),
   back:(R,t)=>t.showed_any?`<div class="fc__kv"><div><span>Showed</span><b>${fmt(t.showed_any)}</b></div><div><span>Call 2 set</span><b>${fmt(t.call2_booked)}</b></div><div><span>Rate</span><b>${pctTxt(t.call2_booked,t.showed_any)}</b></div></div>
       <div class="fc__grp" style="margin-top:12px">By closer</div><div class="fc__sub">${listRows(rateByCloser(R,"call2_booked",x=>x.showed_any),"#9C8CFF")}</div>
-      <div class="fc__fn">Counts when the closer set Deal Status "Follow-Up Booked" on call 1, or a 2nd call was logged.</div>`:none},
+      ${t.call2_pending||t.call2_claimed_only?`<div class="fc__grp" style="margin-top:4px">Also</div><div class="fc__sub"><div class="fc__row"><span>Call 2 still upcoming</span><b>${fmt(t.call2_pending)}</b></div><div class="fc__row"><span>Closer said booked, no booking found</span><b>${fmt(t.call2_claimed_only)}</b></div><div class="fc__row"><span>Avg live calls per person who showed</span><b>${t.showed_any?(t.live_calls/t.showed_any).toFixed(2):"—"}</b></div></div>`:""}
+      <div class="fc__fn">${t.stitched?"October is checked by hand: a 2nd call counts only if it was on a calendar or recorded (GHL, Fathom). ":""}Other months: closer set "Follow-Up Booked" on call 1, or a 2nd call was logged.</div>`:none},
  {id:"s2",label:"2nd-Call Show Rate",icon:"user2",acc:"#FFC266",acc2:"#FF9F2E",tint:"rgba(255,170,60,.16)",
-  front:t=>{const d=t.call2_showed+t.call2_noshow;return {v:P(t.call2_showed,d),unit:"%",note:d?`${fmt(t.call2_showed)} showed · ${fmt(t.call2_noshow)} no-show`:"Tracking from Nov 8",bar:P(t.call2_showed,d)}},
+  front:t=>{const d=t.call2_showed+t.call2_noshow;return {v:P(t.call2_showed,d),unit:"%",note:d?`${fmt(t.call2_showed)} showed · ${fmt(t.call2_noshow)} no-show`:"No 2nd calls held yet",bar:P(t.call2_showed,d)}},
   back:(R,t)=>{const d=t.call2_showed+t.call2_noshow;
     return `<div class="fc__kv"><div><span>Held</span><b>${fmt(d)}</b></div><div><span>Showed</span><b>${fmt(t.call2_showed)}</b></div><div><span>No-show</span><b>${fmt(t.call2_noshow)}</b></div></div>
       ${d?`<div class="fc__grp" style="margin-top:12px">By closer</div><div class="fc__sub">${listRows(rateByCloser(R,"call2_showed",x=>x.call2_showed+x.call2_noshow),"#FFC266")}</div>`:""}
-      <div class="fc__fn">Follow-up calls are tracked from Nov 8 (one-click call log). Before that, follow-ups weren't logged as their own call.</div>`}},
+      <div class="fc__fn">October is checked by hand from GHL calendars, Fathom recordings and texts. Cancelled 2nd calls count as no-shows. Upcoming calls aren't counted yet. From Nov 8 the call log tracks this live; Sep and Nov 1–7 aren't checked yet.</div>`}},
  {id:"cr",label:"Close Rate",icon:"trophy",acc:"#4BE0A8",acc2:"#00ABE5",tint:"rgba(75,224,168,.14)",
   front:t=>({v:P(t.won,t.showed_any),unit:"%",note:t.showed_any?`${fmt(t.won)} won of ${fmt(t.showed_any)} who showed`:"No live calls yet",bar:P(t.won,t.showed_any)}),
   back:(R,t)=>t.showed_any?`<div class="fc__kv"><div><span>Won</span><b>${fmt(t.won)}</b></div><div><span>Offers</span><b>${fmt(t.offered)}</b></div><div><span>Offer → won</span><b>${pctTxt(t.won,t.offered)}</b></div></div>
