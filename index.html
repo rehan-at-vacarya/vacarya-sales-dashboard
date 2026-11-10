@@ -569,6 +569,8 @@ const API_MAIN="https://stayvacarya.app.n8n.cloud/webhook/bigquery-dashboard";
 const API_OBJ ="https://stayvacarya.app.n8n.cloud/webhook/dashboard-objections";
 const API_APPT="https://stayvacarya.app.n8n.cloud/webhook/dashboard-appointments";
 const DEAL=25000;
+/* real money collected (fct_wins.collected); older feeds without it fall back to $25k per deal */
+const cashOf=r=>r.cash_collected!=null?n(r.cash_collected):n(r.deals_won)*DEAL;
 const POLL=60000;          // background refresh, paused while the tab is hidden
 const TIMEOUT=20000;       // per-request abort so a hung endpoint never locks the UI
 
@@ -692,7 +694,7 @@ function sum(R){
     t.um+=n(r.unmapped_outcomes);
     t.c1+=n(r.calls_1); t.c2+=n(r.calls_2); t.c3+=n(r.calls_3);
     t.w1+=n(r.wins_1); t.w2+=n(r.wins_2); t.w3+=n(r.wins_3);
-    t.cash+=n(r.deals_won)*DEAL;
+    t.cash+=cashOf(r);
   });
   return t;
 }
@@ -850,10 +852,12 @@ function objections(O){
 /* ---------- donut with hover ---------- */
 function donut(R){
   const el=document.getElementById("dn"),by={};
-  R.forEach(r=>{const k=r.closer||"—";by[k]=(by[k]||0)+n(r.deals_won)});
+  const cashBy={};
+  R.forEach(r=>{const k=r.closer||"—";by[k]=(by[k]||0)+n(r.deals_won);cashBy[k]=(cashBy[k]||0)+cashOf(r)});
   let L=Object.entries(by).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
   if(!L.length){el.innerHTML=empty("No deals won","Widen the date range to see history");return}
-  if(L.length>5){const rest=L.slice(5).reduce((s,[,v])=>s+v,0);L=L.slice(0,5);
+  if(L.length>5){const rest=L.slice(5).reduce((s,[,v])=>s+v,0);
+    cashBy.Other=L.slice(5).reduce((s,[k])=>s+(cashBy[k]||0),0);L=L.slice(0,5);
     if(rest)L.push(["Other",rest])}
   const tot=L.reduce((s,[,v])=>s+v,0),C=54,R2=42,CIRC=2*Math.PI*R2;
   let off=0,seg="";
@@ -877,7 +881,7 @@ function donut(R){
     showTip(`<div class="tip__t">${k==="Other"?"Other":name(k)}</div>`+
       tipRow(PAL[i%6],"Deals Won",f(v),false)+
       tipRow("","Share",(v/tot*100).toFixed(1)+"%",false)+
-      tipRow("","Cash",money(v*DEAL),false),
+      tipRow("","Cash",money(cashBy[k]||0),false),
       e.clientX,e.clientY);
   };
   const off_=()=>{hideTip();svg.classList.remove("dim");arcs.forEach(a=>a.classList.remove("hot"))};
@@ -914,7 +918,7 @@ function agg(R,A){
     by[k].b+=n(r.logged_calls);by[k].l+=n(r.live_calls);by[k].o+=n(r.offers_made);
     by[k].won+=n(r.deals_won);by[k].lost+=n(r.deals_lost);
     by[k].fu+=n(r.follow_ups_booked);by[k].pend+=n(r.decision_pending);
-    by[k].cash+=n(r.deals_won)*DEAL});
+    by[k].cash+=cashOf(r)});
   /* appointment rows join on closer; a closer with bookings but no logs still gets a row */
   (A||[]).forEach(r=>{const k=r.closer||"—";
     by[k]=by[k]||z();
@@ -992,7 +996,7 @@ function trends(R){
     bk[k].bk+=n(r.ap_booked); bk[k].sh+=n(r.ap_showed); bk[k].fns+=n(r.ap_noshow);
     bk[k].b+=n(r.logged_calls); bk[k].l+=n(r.live_calls);
     bk[k].o+=n(r.offers_made); bk[k].won+=n(r.deals_won);
-    bk[k].cash+=n(r.deals_won)*DEAL;
+    bk[k].cash+=cashOf(r);
   });
   const keys=Object.keys(bk).sort();
   if(keys.length<2){wrap.innerHTML=`<div class="card">`+
