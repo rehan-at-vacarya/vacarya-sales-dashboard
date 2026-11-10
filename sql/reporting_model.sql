@@ -131,6 +131,10 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY JSON_VALUE(payload, '$.contact_id') ORDE
 
 CREATE OR REPLACE VIEW `nimble-album-506802-t2.Sales.fct_calls` AS
 -- One row per call a closer logged. Re-logs of the same call within 2 hours count once (latest log wins).
+-- call_date = the day the call HAPPENED, not the day it was logged: the contact's latest GHL appointment
+-- (not cancelled) that started before the log and within 14 days.  If an earlier log already covers that
+-- appointment, this log is a new call held off-calendar (e.g. a 2nd call on Google) -> the log day.
+-- logged_date keeps the day the closer filled the form.
 WITH src AS (
   SELECT * FROM `nimble-album-506802-t2.Sales.stg_closer_logs`
   WHERE event_type = 'call_logged' AND call_outcome IS NOT NULL
@@ -151,10 +155,26 @@ deduped AS (
   SELECT * FROM grouped
   QUALIFY ROW_NUMBER() OVER (PARTITION BY opportunity_id, call_group ORDER BY received_at DESC, contact_email DESC) = 1
 ),
+appts AS (
+  SELECT contact_id, start_local FROM `nimble-album-506802-t2.Sales.stg_appointments`
+  WHERE contact_id IS NOT NULL AND start_local IS NOT NULL AND COALESCE(status, '') != 'cancelled'
+),
+dated AS (
+  SELECT d.*,
+    (SELECT MAX(a.start_local) FROM appts a
+      WHERE a.contact_id = d.contact_id
+        AND a.start_local <= DATETIME(d.received_at, 'America/Toronto')
+        AND a.start_local >= DATETIME_SUB(DATETIME(d.received_at, 'America/Toronto'), INTERVAL 14 DAY)) AS appt_start,
+    LAG(d.received_at) OVER (PARTITION BY d.contact_id ORDER BY d.received_at) AS prev_log_at
+  FROM deduped d
+),
 flagged AS (
   SELECT
     opportunity_id, contact_id, contact_email, contact_phone, contact_name,
-    received_at, event_date AS call_date,
+    received_at,
+    IF(appt_start IS NOT NULL AND (prev_log_at IS NULL OR DATETIME(prev_log_at, 'America/Toronto') < appt_start),
+       DATE(appt_start), event_date) AS call_date,
+    event_date AS logged_date,
     closer, setter, source, call_outcome, prior_calls,
     call_outcome = 'No Show'             AS is_no_show,
     STARTS_WITH(call_outcome, 'Live')    AS is_live,
@@ -162,7 +182,7 @@ flagged AS (
     call_outcome = 'Live - Disqualified' AS is_dq,
     call_outcome = 'Live - Offer Made'   AS is_offer,
     call_outcome NOT IN ('No Show', 'Live - No Offer', 'Live - Disqualified', 'Live - Offer Made') AS is_unmapped
-  FROM deduped
+  FROM dated
 )
 SELECT *,
   ROW_NUMBER() OVER (PARTITION BY opportunity_id ORDER BY received_at) AS attempt_number,
@@ -257,7 +277,12 @@ CREATE OR REPLACE VIEW `nimble-album-506802-t2.Sales.fct_people` AS
 --   setter_bucket = setter outcome, else Canceled (booking cancelled, no call), else No Pickup
 --   cancelled   = latest booking cancelled and no call logged
 --   showed      = had at least one live call after booking;  noshow = never live, at least one No Show
---   call1_*     = outcome of the first logged call;  call2_* = 2nd-call stitch (Sep-Nov history) or live logs
+--   call1_*     = outcome of the first logged call
+--   call2_*     = 2nd call = anything after the first LIVE call (+2h).  Booked = closer set Follow-Up Booked,
+--                 a new GHL appointment was booked, or a later call was logged.  Showed = any later live call;
+--                 no-show = later No Show and no later live call.  Sep-Nov history (stitch_followups) counts
+--                 too, and a live log always wins over the history (pending / claimed-only resolve themselves).
+--                 For history people a bare "Follow-Up Booked" claim is not enough (audited: claimed_only = no 2nd call found).
 --   won         = paid (fct_wins);  lost / open = latest GHL deal status when not paid
 WITH a AS (SELECT * FROM `nimble-album-506802-t2.Sales.stg_appointments` WHERE contact_id IS NOT NULL),
 first_bk AS (
@@ -300,10 +325,18 @@ fu_flag AS (
   GROUP BY 1
 ),
 second_call AS (
-  SELECT p.contact_id, ARRAY_AGG(c.call_outcome ORDER BY c.received_at LIMIT 1)[SAFE_OFFSET(0)] AS second_outcome
+  SELECT p.contact_id,
+    ARRAY_AGG(c.call_outcome ORDER BY c.received_at LIMIT 1)[SAFE_OFFSET(0)] AS second_outcome,
+    LOGICAL_OR(c.is_live)    AS live_after,
+    LOGICAL_OR(c.is_no_show) AS noshow_after
   FROM pc p JOIN calls c ON c.contact_id = p.contact_id AND c.received_at > TIMESTAMP_ADD(p.first_live_at, INTERVAL 2 HOUR)
   WHERE p.first_live_at IS NOT NULL
   GROUP BY 1
+),
+rebook AS (
+  SELECT DISTINCT p.contact_id
+  FROM pc p JOIN a ON a.contact_id = p.contact_id AND a.booked_at > p.first_live_at
+  WHERE p.first_live_at IS NOT NULL
 ),
 deal AS (
   SELECT contact_id, ARRAY_AGG(deal_status ORDER BY status_at DESC LIMIT 1)[OFFSET(0)] AS deal_status
@@ -336,6 +369,8 @@ base AS (
     NOT COALESCE(p.ever_live, FALSE) AND COALESCE(p.any_noshow, FALSE) AS noshow,
     st.contact_id IS NOT NULL AS stitched,
     st.call2_status, fu.fu_booked, sc.second_outcome, p.n_live, st.live_calls AS st_live_calls,
+    COALESCE(sc.live_after, FALSE) AS live_after, COALESCE(sc.noshow_after, FALSE) AS noshow_after,
+    rb.contact_id IS NOT NULL AS rebooked,
     d.deal_status,
     pd.contact_id IS NOT NULL AS won, pd.won_date, COALESCE(pd.cash, 0) AS cash
   FROM first_bk f
@@ -345,6 +380,7 @@ base AS (
   LEFT JOIN pc p USING (contact_id)
   LEFT JOIN fu_flag fu USING (contact_id)
   LEFT JOIN second_call sc USING (contact_id)
+  LEFT JOIN rebook rb USING (contact_id)
   LEFT JOIN `nimble-album-506802-t2.Sales.stitch_followups` st USING (contact_id)
   LEFT JOIN deal d USING (contact_id)
   LEFT JOIN paid pd USING (contact_id)
@@ -370,14 +406,15 @@ SELECT
   COALESCE(first_outcome != 'No Show', FALSE) AS call1_showed,
   COALESCE(first_outcome = 'No Show', FALSE)  AS call1_noshow,
   showed, noshow, offered,
-  IF(stitched, call2_status IN ('showed', 'no_show', 'pending'),
-     showed AND (COALESCE(fu_booked, FALSE) OR second_outcome IS NOT NULL)) AS call2_booked,
-  IF(stitched, call2_status = 'showed', COALESCE(STARTS_WITH(second_outcome, 'Live'), FALSE)) AS call2_showed,
-  IF(stitched, call2_status = 'no_show', COALESCE(second_outcome = 'No Show', FALSE)) AS call2_noshow,
-  IF(stitched, call2_status = 'pending', FALSE)      AS call2_pending,
-  IF(stitched, call2_status = 'claimed_only', FALSE) AS call2_claimed_only,
-  COALESCE(call2_status, second_outcome) AS second_outcome,
-  COALESCE(st_live_calls, n_live, 0) AS live_calls,
+  COALESCE(call2_status IN ('showed', 'no_show', 'pending'), FALSE)
+    OR (showed AND (rebooked OR second_outcome IS NOT NULL OR (NOT stitched AND COALESCE(fu_booked, FALSE)))) AS call2_booked,
+  COALESCE(call2_status = 'showed', FALSE) OR live_after AS call2_showed,
+  NOT (COALESCE(call2_status = 'showed', FALSE) OR live_after)
+    AND (COALESCE(call2_status = 'no_show', FALSE) OR noshow_after) AS call2_noshow,
+  COALESCE(call2_status = 'pending', FALSE) AND NOT live_after AND NOT noshow_after AS call2_pending,
+  COALESCE(call2_status = 'claimed_only', FALSE) AND NOT live_after AND NOT noshow_after AS call2_claimed_only,
+  CASE WHEN live_after THEN 'Live' WHEN noshow_after THEN 'No Show' ELSE COALESCE(call2_status, second_outcome) END AS second_outcome,
+  GREATEST(COALESCE(st_live_calls, 0), COALESCE(n_live, 0)) AS live_calls,
   stitched,
   IF(won, 'Won', deal_status) AS deal_status,
   won, won_date, cash,

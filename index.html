@@ -79,6 +79,77 @@ body{margin:0;background:var(--bg);color:var(--text);font:400 14px/1.45 var(--fo
 .dd__opt[aria-selected="true"]{color:var(--text);font-weight:500}
 .dd__opt[aria-selected="true"] svg{opacity:1;color:var(--accent)}
 @media(prefers-reduced-motion:reduce){.dd__pop{animation:none}.dd__btn svg{transition:none}}
+/* ---- date range picker (both tabs). Presets apply at once; a custom range is picked on the calendar + Apply ---- */
+.drp{--drp-acc:#4C8DFF;--drp-h:30px;--drp-r:9px;--drp-font:var(--font);--drp-fs:12px;
+  position:relative;display:inline-flex;vertical-align:middle;font-family:var(--drp-font)}
+.drp--ai{--drp-acc:#2CC2F5;--drp-h:36px;--drp-r:13px;--drp-font:var(--ai-font);--drp-fs:12.5px}
+.drp__btn{display:inline-flex;align-items:center;gap:8px;height:var(--drp-h);padding:0 10px 0 11px;
+  background:var(--glass-1);border:1px solid var(--line);border-radius:var(--drp-r);color:var(--text);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);font:500 var(--drp-fs) var(--drp-font);cursor:pointer;white-space:nowrap;
+  transition:border-color .15s,background-color .15s}
+.drp--ai .drp__btn{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);font-weight:600;padding:0 12px 0 13px;
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.drp__btn:hover,.drp.on .drp__btn{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.08)}
+.drp__btn svg{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.drp__btn .drp__ic{color:var(--drp-acc)}
+.drp__btn .drp__chev{width:13px;height:13px;stroke-width:2.2;color:var(--muted);transition:transform .2s}
+.drp.on .drp__chev{transform:rotate(180deg)}
+.drp__rng{color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+.drp__pop{position:absolute;top:calc(100% + 8px);right:0;z-index:70;display:flex;outline:none;
+  background:rgba(15,17,23,.985);-webkit-backdrop-filter:blur(24px) saturate(150%);backdrop-filter:blur(24px) saturate(150%);
+  border:1px solid rgba(255,255,255,.11);border-radius:16px;color:var(--text);
+  box-shadow:0 28px 60px -18px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.06);animation:ddIn .16s ease-out}
+.drp--ai .drp__pop{border-radius:20px;background:rgba(12,16,26,.975)}
+.drp__pop[hidden]{display:none}
+.drp.left .drp__pop{right:auto;left:0}
+.drp__pre{display:flex;flex-direction:column;gap:2px;padding:10px;width:156px;flex:none;border-right:1px solid rgba(255,255,255,.07)}
+.drp__pre button{height:32px;padding:0 11px;border:0;border-radius:9px;background:none;color:var(--muted);text-align:left;
+  font:500 12.5px var(--drp-font);cursor:pointer;white-space:nowrap;transition:background-color .12s,color .12s}
+.drp__pre button:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.drp__pre button[aria-pressed="true"]{background:color-mix(in srgb,var(--drp-acc) 18%,transparent);color:#fff}
+.drp__main{display:flex;flex-direction:column;padding:14px 16px 12px}
+.drp__cals{display:flex;gap:22px}
+.drp__cal{width:238px}
+.drp__mh{position:relative;display:flex;align-items:center;justify-content:center;height:30px;margin-bottom:6px;
+  font:600 13px var(--drp-font);letter-spacing:-.01em}
+.drp__nav{position:absolute;top:0;width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:9px;
+  background:none;color:var(--muted);cursor:pointer;transition:background-color .12s,color .12s}
+.drp__nav:hover{background:rgba(255,255,255,.07);color:var(--text)}
+.drp__nav:disabled{opacity:.25;cursor:default;background:none}
+.drp__nav svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.drp__nav.p{left:0}.drp__nav.n{right:0}
+.drp__g{display:grid;grid-template-columns:repeat(7,34px);row-gap:2px}
+.drp__wd{height:26px;display:grid;place-items:center;font-size:11px;font-weight:500;color:var(--subtle)}
+.drp__d{position:relative;height:34px;border:0;padding:0;background:none;color:var(--text);cursor:pointer;
+  font:500 12.5px var(--drp-font);font-variant-numeric:tabular-nums}
+.drp__d span{position:relative;z-index:1;display:grid;place-items:center;width:32px;height:32px;margin:1px;border-radius:50%;
+  transition:background-color .1s}
+.drp__d:hover span{background:rgba(255,255,255,.09)}
+.drp__d.in::before{content:"";position:absolute;inset:1px 0;background:color-mix(in srgb,var(--drp-acc) 16%,transparent)}
+.drp__d.s::before{left:50%}.drp__d.e::before{right:50%}.drp__d.s.e::before{display:none}
+.drp__d.s span,.drp__d.e span{background:var(--drp-acc);color:#06121F;font-weight:650}
+.drp__d.t span{box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+.drp__d.s.t span,.drp__d.e.t span{box-shadow:none}
+.drp__d:disabled{color:rgba(255,255,255,.18);cursor:default}
+.drp__d:disabled span{background:none}
+.drp__foot{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)}
+.drp__sel{margin-right:auto;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.drp__sel b{color:var(--text);font-weight:600}
+.drp__fb{height:32px;padding:0 14px;border-radius:9px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);
+  color:var(--muted);font:600 12.5px var(--drp-font);cursor:pointer;transition:background-color .12s,color .12s,opacity .12s}
+.drp__fb:hover{color:var(--text);background:rgba(255,255,255,.08)}
+.drp__fb.go{background:var(--drp-acc);border-color:transparent;color:#06121F}
+.drp__fb.go:hover{filter:brightness(1.08);color:#06121F;background:var(--drp-acc)}
+.drp__fb:disabled{opacity:.35;cursor:default;filter:none}
+@media(max-width:700px){
+  .drp__pop{position:fixed;left:12px!important;right:12px!important;flex-direction:column;max-height:calc(100vh - 24px);overflow:auto}
+  .drp__pre{flex-direction:row;width:auto;overflow-x:auto;border-right:0;border-bottom:1px solid rgba(255,255,255,.07);scrollbar-width:none}
+  .drp__pre button{flex:none}
+  .drp__main{padding:12px}.drp__cals{justify-content:center}.drp__cal{width:100%;max-width:300px}
+  .drp__g{grid-template-columns:repeat(7,1fr)}.drp__d span{margin:1px auto}
+  .drp__rng{display:none}
+}
+@media(prefers-reduced-motion:reduce){.drp__pop{animation:none}.drp__chev{transition:none}}
 .ghost.ico{width:30px;padding:0;display:inline-flex;align-items:center;justify-content:center}
 .ghost.ico svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;fill:none;
   stroke-linecap:round;stroke-linejoin:round}
@@ -380,17 +451,7 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
   <h1>Closer Performance</h1>
   <span class="stamp" id="stamp">Loading…</span>
   <div class="right">
-    <div class="seg">
-      <button data-d="7">7d</button>
-      <button data-d="30" aria-pressed="true">30d</button>
-      <button data-d="90">90d</button>
-      <button data-d="0">All</button>
-      <button data-d="c">Custom</button>
-    </div>
-    <span id="dr" style="display:none;gap:6px;align-items:center">
-      <input type="date" id="d1" class="dinp"><span style="color:var(--subtle);font-size:12px">to</span>
-      <input type="date" id="d2" class="dinp">
-    </span>
+    <div id="drMain"></div>
     <select id="cf" data-dd aria-label="Closer"><option value="">All closers</option></select>
     <select id="sf" data-dd aria-label="Source"><option value="">All sources</option></select>
     <button class="ghost" id="ex">Export</button>
@@ -418,13 +479,7 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
       <p class="ai-sub" id="aiSub">People who booked in this period · first booking only</p>
     </div>
     <div class="ai-ctl">
-      <div class="ai-seg" id="aiPer">
-        <span class="pill"></span>
-        <button data-p="m" aria-pressed="true">This month</button>
-        <button data-p="lm">Last month</button>
-        <button data-p="90">90 days</button>
-        <button data-p="all">All time</button>
-      </div>
+      <div id="drAi"></div>
       <select class="ai-sel" id="aiCl" data-dd="ai-dd" aria-label="Closer"><option value="">All closers</option></select>
       <select class="ai-sel" id="aiSr" data-dd="ai-dd" aria-label="Source"><option value="">All sources</option></select>
       <div class="ai-stamp" id="aiStamp">Loading…</div>
@@ -526,17 +581,7 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
 
   <section class="sec">
     <div class="sec__h"><span>Trend Analysis</span><i></i>
-      <div class="seg" id="tdseg">
-        <button data-td="30">30d</button>
-        <button data-td="90">90d</button>
-        <button data-td="365">1y</button>
-        <button data-td="0" aria-pressed="true">All</button>
-        <button data-td="c">Custom</button>
-      </div>
-      <span id="tdr" style="display:none;gap:6px;align-items:center">
-        <input type="date" class="dinp" id="td1"><span class="stamp">to</span>
-        <input type="date" class="dinp" id="td2">
-      </span>
+      <div id="drTrend"></div>
       <div class="seg" id="tfseg">
         <button data-t="D">Daily</button>
         <button data-t="W" aria-pressed="true">Weekly</button>
@@ -565,6 +610,118 @@ body.ai-on .bar{background:rgba(5,7,12,.55);border-bottom-color:rgba(255,255,255
 
 
 <script>
+/* ============ date range picker ============
+   DRP.make(mount,{presets,value,theme,onChange}) -> {get()}.  get() = {key,s,e,label,title}
+   s/e are YYYY-MM-DD in Toronto time; "" = open end (All time).  Presets are rolling: get() recomputes them,
+   so "Last 30 days" is always today-29 .. today.  key "c" = custom range picked on the calendar. */
+window.DRP=(function(){
+  const IC='<svg class="drp__ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+  const CH='<svg class="drp__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  const AL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
+  const AR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  const today=()=>new Intl.DateTimeFormat("en-CA",{timeZone:"America/Toronto"}).format(new Date());
+  const add=(d,k)=>{const x=new Date(d+"T12:00:00Z");x.setUTCDate(x.getUTCDate()+k);return x.toISOString().slice(0,10)};
+  const addM=(m,k)=>{const x=new Date(m+"-15T12:00:00Z");x.setUTCMonth(x.getUTCMonth()+k);return x.toISOString().slice(0,7)};
+  const fd=(d,y)=>new Date(d+"T12:00:00Z").toLocaleDateString("en-US",Object.assign({month:"short",day:"numeric",timeZone:"UTC"},y?{year:"numeric"}:{}));
+  const ml=m=>new Date(m+"-15T12:00:00Z").toLocaleDateString("en-US",{month:"long",year:"numeric",timeZone:"UTC"});
+  const P={
+    today:{l:"Today",r:t=>[t,t]},
+    yday:{l:"Yesterday",r:t=>[add(t,-1),add(t,-1)]},
+    "7":{l:"Last 7 days",r:t=>[add(t,-6),t]},
+    "30":{l:"Last 30 days",r:t=>[add(t,-29),t]},
+    "90":{l:"Last 90 days",r:t=>[add(t,-89),t]},
+    m:{l:"This month",r:t=>[t.slice(0,7)+"-01",t]},
+    lm:{l:"Last month",r:t=>[addM(t.slice(0,7),-1)+"-01",add(t.slice(0,7)+"-01",-1)]},
+    y:{l:"This year",r:t=>[t.slice(0,4)+"-01-01",t]},
+    "365":{l:"Last 12 months",r:t=>[add(t,-364),t]},
+    all:{l:"All time",r:()=>["",""]}
+  };
+  const lab=(s,e)=>{if(!s&&!e)return "All time"; if(s===e)return fd(s,true);
+    return fd(s,s.slice(0,4)!==e.slice(0,4))+" – "+fd(e,true)};
+  let cur=null;
+  document.addEventListener("pointerdown",e=>{if(cur&&!cur.wrap.contains(e.target))cur.close()});
+  addEventListener("resize",()=>{if(cur&&innerWidth>700)cur.close()});
+
+  function make(mount,o){
+    const st={key:o.value||"30",cs:"",ce:"",a:"",b:"",hov:"",vm:""};
+    const wrap=document.createElement("div"); wrap.className="drp"+(o.theme?" drp--"+o.theme:"");
+    wrap.innerHTML=`<button type="button" class="drp__btn" aria-haspopup="dialog" aria-expanded="false">${IC}<span class="drp__t"></span><span class="drp__rng"></span>${CH}</button>
+      <div class="drp__pop" role="dialog" aria-label="Date range" tabindex="-1" hidden>
+        <div class="drp__pre">${o.presets.map(k=>`<button type="button" data-k="${k}">${P[k].l}</button>`).join("")}</div>
+        <div class="drp__main"><div class="drp__cals"></div>
+          <div class="drp__foot"><span class="drp__sel"></span>
+            <button type="button" class="drp__fb" data-x>Cancel</button><button type="button" class="drp__fb go" data-ok>Apply</button></div></div>
+      </div>`;
+    mount.replaceWith(wrap);
+    const btn=wrap.querySelector(".drp__btn"), pop=wrap.querySelector(".drp__pop"), cals=wrap.querySelector(".drp__cals"),
+          sel=wrap.querySelector(".drp__sel"), ok=wrap.querySelector("[data-ok]");
+    function get(){
+      if(st.key==="c") return {key:"c",s:st.cs,e:st.ce,label:lab(st.cs,st.ce),title:lab(st.cs,st.ce)};
+      const [s,e]=P[st.key].r(today()); return {key:st.key,s,e,label:lab(s,e),title:P[st.key].l};
+    }
+    function syncBtn(){
+      const r=get(); wrap.querySelector(".drp__t").textContent=r.title;
+      wrap.querySelector(".drp__rng").textContent=r.key==="c"||r.key==="all"||r.key==="today"||r.key==="yday"?"":r.label;
+      btn.setAttribute("aria-label","Date range: "+r.title+(r.key==="c"?"":" ("+r.label+")"));
+    }
+    function month(m,t,first,last,two){
+      const y=+m.slice(0,4), mo=+m.slice(5,7), lead=new Date(Date.UTC(y,mo-1,1)).getUTCDay(), n=new Date(Date.UTC(y,mo,0)).getUTCDate();
+      const lo=st.a, hi=st.b||(st.a&&st.hov&&st.hov>st.a?st.hov:st.a);
+      let h=`<div class="drp__cal"><div class="drp__mh">${first?`<button type="button" class="drp__nav p" data-nav="-1" aria-label="Previous month">${AL}</button>`:""}
+        <span>${ml(m)}</span>${last?`<button type="button" class="drp__nav n" data-nav="1" aria-label="Next month" ${m>=t.slice(0,7)?"disabled":""}>${AR}</button>`:""}</div>
+        <div class="drp__g">${["S","M","T","W","T","F","S"].map(d=>`<span class="drp__wd">${d}</span>`).join("")}`;
+      for(let i=0;i<lead;i++) h+="<span></span>";
+      for(let d=1;d<=n;d++){
+        const ds=m+"-"+String(d).padStart(2,"0"), c=[];
+        if(lo&&ds>=lo&&ds<=hi) c.push("in"); if(ds===lo) c.push("s"); if(ds===hi) c.push("e"); if(ds===t) c.push("t");
+        h+=`<button type="button" class="drp__d ${c.join(" ")}" data-d="${ds}" ${ds>t?"disabled":""} aria-label="${fd(ds,true)}"><span>${d}</span></button>`;
+      }
+      return h+"</div></div>";
+    }
+    function render(){
+      const t=today(), two=innerWidth>700;
+      cals.innerHTML=two?month(addM(st.vm,-1),t,true,false)+month(st.vm,t,false,true):month(st.vm,t,true,true);
+      const hi=st.b||st.a;
+      sel.innerHTML=st.a?`<b>${lab(st.a,hi)}</b>`:(st.key==="all"?"<b>All time</b> · or pick a start date":"Pick a start date");
+      if(st.a&&!st.b) sel.innerHTML=`<b>${fd(st.a,true)}</b> → pick an end date`;
+      ok.disabled=!st.a;
+      wrap.querySelectorAll(".drp__pre [data-k]").forEach(b=>b.setAttribute("aria-pressed",String(st.key===b.dataset.k&&!st.dirty)));
+    }
+    function open(){
+      if(cur&&cur!==api) cur.close();
+      const r=get(); st.a=r.s; st.b=r.e; st.hov=""; st.dirty=false;
+      const t=today(); st.vm=(r.e||t).slice(0,7); if(innerWidth>700&&st.vm===(r.s||"").slice(0,7)&&st.vm<t.slice(0,7)) st.vm=addM(st.vm,1);
+      pop.hidden=false; wrap.classList.add("on"); btn.setAttribute("aria-expanded","true"); cur=api; render();
+      wrap.classList.remove("left");
+      if(innerWidth>700){ if(pop.getBoundingClientRect().left<8) wrap.classList.add("left"); pop.style.top=""; }
+      else { pop.style.top=Math.min(btn.getBoundingClientRect().bottom+8,innerHeight-40)+"px"; }
+      pop.focus({preventScroll:true});
+    }
+    function close(f){pop.hidden=true;wrap.classList.remove("on");btn.setAttribute("aria-expanded","false");if(cur===api)cur=null;if(f)btn.focus({preventScroll:true})}
+    function commit(key,s,e){st.key=key; if(key==="c"){st.cs=s;st.ce=e} syncBtn(); close(true); o.onChange&&o.onChange(get())}
+    btn.addEventListener("click",()=>cur===api?close(false):open());
+    pop.addEventListener("click",e=>{
+      const k=e.target.closest("[data-k]"); if(k){commit(k.dataset.k);return}
+      const nv=e.target.closest("[data-nav]"); if(nv&&!nv.disabled){st.vm=addM(st.vm,+nv.dataset.nav);render();return}
+      const d=e.target.closest(".drp__d"); if(d&&!d.disabled){
+        const v=d.dataset.d; st.dirty=true;
+        if(!st.a||st.b||v<st.a){st.a=v;st.b=""} else st.b=v;
+        render(); return}
+      if(e.target.closest("[data-x]")){close(true);return}
+      if(e.target.closest("[data-ok]")&&st.a){commit("c",st.a,st.b||st.a)}
+    });
+    pop.addEventListener("mouseover",e=>{const d=e.target.closest(".drp__d");
+      if(d&&!d.disabled&&st.a&&!st.b&&st.hov!==d.dataset.d){st.hov=d.dataset.d;render()}});
+    pop.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();close(true)}
+      if(e.key==="Enter"&&e.target===pop&&st.a){commit("c",st.a,st.b||st.a)}});
+    const api={wrap,get,close:()=>close(false)};
+    syncBtn();
+    return api;
+  }
+  return {make,range:(k)=>{const [s,e]=P[k].r(today());return {s,e}}};
+})();
+</script>
+<script>
 const API_MAIN="https://stayvacarya.app.n8n.cloud/webhook/bigquery-dashboard";
 const API_OBJ ="https://stayvacarya.app.n8n.cloud/webhook/dashboard-objections";
 const API_APPT="https://stayvacarya.app.n8n.cloud/webhook/dashboard-appointments";
@@ -576,12 +733,12 @@ const TIMEOUT=20000;       // per-request abort so a hung endpoint never locks t
 
 /* appts: booked-call rows (data starts Sep 9). apptOK flips true on the first good load
    and stays true, so a later failure keeps the last good data instead of blanking. */
-let S={rows:[],objs:[],appts:[],apptOK:false,days:30,d1:"",d2:"",closer:"",source:"",sort:"cash",dir:-1,
-       tf:"W",tdays:0,td1:"",td2:"",booted:false,busy:false};
+let S={rows:[],objs:[],appts:[],apptOK:false,s:DRP.range("30").s,e:"",closer:"",source:"",sort:"cash",dir:-1,
+       tf:"W",ts:"",te:"",booted:false,busy:false,dp:null,tp:null};
 
 const n=v=>Number(v||0), f=v=>v.toLocaleString("en-US");
 const money=v=>v>=1e6?"$"+(v/1e6).toFixed(2)+"M":v>=1e3?"$"+Math.round(v/1e3)+"k":"$"+f(v);
-const pct=(a,b)=>b>0?(a/b*100).toFixed(1)+"%":"—";
+const pct=(a,b)=>b>0?(a/b*100).toFixed(1)+"%":"0%";   /* nothing to divide yet -> 0%, not a dash */
 const cash2=v=>v>=1e6?"$"+(v/1e6).toFixed(2)+"M":"$"+Math.round(v).toLocaleString("en-US");
 const name=s=>(s||"—").replace(/@.*/,"").split(/[._\s]/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(" ");
 const yes=v=>v===true||v==="true";
@@ -659,15 +816,10 @@ async function load(){
   } finally { setBusy(false) }
 }
 
-/* date test only. days: 0 = all, "c" = custom pair */
-function inWindow(x,days,d1,d2){
-  if(days==="c"){
-    if(d1&&x.occurred_date<d1)return false;
-    if(d2&&x.occurred_date>d2)return false;
-  }else if(days){
-    const c=new Date(Date.now()-days*864e5).toISOString().slice(0,10);
-    if(x.occurred_date<c)return false;
-  }
+/* date test only. s / e = YYYY-MM-DD (Toronto), "" = open end */
+function inWindow(x,s,e){
+  if(s&&x.occurred_date<s)return false;
+  if(e&&x.occurred_date>e)return false;
   return true;
 }
 /* closer + source apply everywhere. Date does not -- Trend Analysis has its own. */
@@ -676,8 +828,10 @@ function inDims(x){
   if(S.source&&x.source!==S.source)return false;
   return true;
 }
-function inRange(x){return inWindow(x,S.days,S.d1,S.d2)&&inDims(x)}
-function inTrendRange(x){return inWindow(x,S.tdays,S.td1,S.td2)&&inDims(x)}
+function inRange(x){return inWindow(x,S.s,S.e)&&inDims(x)}
+function inTrendRange(x){return inWindow(x,S.ts,S.te)&&inDims(x)}
+/* presets roll with the calendar: re-read them before each paint */
+function syncDates(){if(S.dp){const r=S.dp.get();S.s=r.s;S.e=r.e} if(S.tp){const r=S.tp.get();S.ts=r.s;S.te=r.e}}
 function sum(R){
   const t={b:0,ns:0,l:0,no:0,dq:0,o:0,won:0,lost:0,fu:0,pend:0,um:0,
            c1:0,c2:0,c3:0,w1:0,w2:0,w3:0,cash:0,
@@ -718,6 +872,7 @@ function opts(){
 }
 
 function draw(){
+  syncDates();
   opts();
   const R=S.rows.filter(inRange), t=sum(R);
   const A=S.appts.filter(inRange);
@@ -1094,40 +1249,15 @@ function csv(){
   a.click();URL.revokeObjectURL(a.href);
 }
 
-document.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("[data-d]").forEach(x=>x.removeAttribute("aria-pressed"));
-  b.setAttribute("aria-pressed","true");
-  const v=b.dataset.d;
-  const box=document.getElementById("dr");
-  if(v==="c"){
-    box.style.display="flex"; S.days="c";
-    if(!S.d1){const ds=S.rows.map(r=>r.occurred_date).sort();
-      S.d1=ds[0]||new Date(Date.now()-30*864e5).toISOString().slice(0,10);
-      S.d2=ds[ds.length-1]||new Date().toISOString().slice(0,10);
-      d1.value=S.d1; d2.value=S.d2;}
-  } else { box.style.display="none"; S.days=+v; }
-  draw();});
-d1.onchange=e=>{S.d1=e.target.value;draw()};
-d2.onchange=e=>{S.d2=e.target.value;draw()};
+S.dp=DRP.make(document.getElementById("drMain"),{presets:["today","yday","7","30","90","m","lm","y","all"],value:"30",
+  onChange:r=>{S.s=r.s;S.e=r.e;draw()}});
 document.querySelectorAll("#tfseg button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("#tfseg button").forEach(x=>x.removeAttribute("aria-pressed"));
   b.setAttribute("aria-pressed","true");S.tf=b.dataset.t;
   trends(S.rows.filter(inTrendRange));});
 /* Trend Analysis keeps its own date range, independent of the header filter */
-document.querySelectorAll("#tdseg button").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("#tdseg button").forEach(x=>x.removeAttribute("aria-pressed"));
-  b.setAttribute("aria-pressed","true");
-  const v=b.dataset.td, box=document.getElementById("tdr");
-  if(v==="c"){
-    box.style.display="flex"; S.tdays="c";
-    if(!S.td1){const ds=S.rows.map(r=>r.occurred_date).sort();
-      S.td1=ds[0]||new Date(Date.now()-90*864e5).toISOString().slice(0,10);
-      S.td2=ds[ds.length-1]||new Date().toISOString().slice(0,10);
-      td1.value=S.td1; td2.value=S.td2;}
-  } else { box.style.display="none"; S.tdays=+v; }
-  trends(S.rows.filter(inTrendRange));});
-td1.onchange=e=>{S.td1=e.target.value;trends(S.rows.filter(inTrendRange))};
-td2.onchange=e=>{S.td2=e.target.value;trends(S.rows.filter(inTrendRange))};
+S.tp=DRP.make(document.getElementById("drTrend"),{presets:["30","90","m","lm","y","365","all"],value:"all",
+  onChange:r=>{S.ts=r.s;S.te=r.e;trends(S.rows.filter(inTrendRange))}});
 cf.onchange=e=>{S.closer=e.target.value;draw()};
 sf.onchange=e=>{S.source=e.target.value;draw()};
 ex.onclick=csv;
@@ -1156,7 +1286,7 @@ startPoll();
 (function(){
 const API="https://stayvacarya.app.n8n.cloud/webhook/dashboard-aiden";
 const $=id=>document.getElementById(id);
-const A={rows:[],ok:false,per:"m",cl:"",sr:"",busy:false,timer:null,shown:false};
+const A={rows:[],ok:false,dp:null,cl:"",sr:"",busy:false,timer:null,shown:false};
 const N=v=>Number(v||0);
 const fmt=v=>Math.round(v).toLocaleString("en-US");
 const P=(a,b)=>b>0?a/b:0;   /* nothing to divide yet -> 0, not a blank */
@@ -1171,12 +1301,9 @@ const monLabel=m=>new Date(m+"-15T12:00:00Z").toLocaleDateString("en-US",{month:
 const dayLabel=d=>new Date(d+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"});
 
 function range(){
-  const t=today(), m=t.slice(0,7);
-  if(A.per==="m") return [m+"-01",t,monLabel(m)];
-  if(A.per==="lm"){const d=new Date(m+"-01T12:00:00Z");d.setUTCMonth(d.getUTCMonth()-1);
-    const lm=d.toISOString().slice(0,7), end=addDays(m+"-01",-1);return [lm+"-01",end,monLabel(lm)]}
-  if(A.per==="90"){const s=addDays(t,-89);return [s,t,dayLabel(s)+" – "+dayLabel(t)]}
-  return ["0000-01-01","9999-12-31","All time"];
+  const r=A.dp?A.dp.get():Object.assign({key:"m"},DRP.range("m"));
+  const label=r.key==="m"||r.key==="lm"?monLabel(r.s.slice(0,7)):r.key==="c"||r.key==="all"?r.label||"All time":r.title+" · "+r.label;
+  return [r.s||"0000-01-01",r.e||"9999-12-31",label];
 }
 const dimOK=r=>(!A.cl||r.closer===A.cl)&&(!A.sr||srcName(r.source)===A.sr);
 const KEYS=["booked","qualified","unqualified","no_pickup","canceled","call1_showed","call1_noshow","q_call1_showed",
@@ -1376,12 +1503,11 @@ function opts(){
   fill($("aiSr"),[...new Set(A.rows.map(r=>srcName(r.source)))].sort(),x=>x,"All sources");
 }
 function movePill(seg){
+  if(!seg) return;
   const on=seg.querySelector('[aria-pressed="true"]'), p=seg.querySelector(".pill");
   if(on&&p){p.style.left=on.offsetLeft+"px";p.style.width=on.offsetWidth+"px"}
 }
-$("aiPer").querySelectorAll("button").forEach(b=>b.onclick=()=>{
-  $("aiPer").querySelectorAll("button").forEach(x=>x.removeAttribute("aria-pressed"));
-  b.setAttribute("aria-pressed","true"); A.per=b.dataset.p; movePill($("aiPer")); paint(true)});
+A.dp=DRP.make($("drAi"),{presets:["today","yday","7","30","90","m","lm","y","all"],value:"m",theme:"ai",onChange:()=>paint(true)});
 $("aiCl").onchange=e=>{A.cl=e.target.value;paint(true)};
 $("aiSr").onchange=e=>{A.sr=e.target.value;paint(true)};
 
